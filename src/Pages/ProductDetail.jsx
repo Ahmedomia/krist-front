@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import allProducts from "../data/products";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import MyIcons from "../Components/Icons";
 import { FaRegStar, FaExchangeAlt, FaRegEye } from "react-icons/fa";
@@ -29,6 +29,10 @@ export default function ProductDetail() {
   const addToCart = useCartStore((state) => state.addToCart);
 
   const relatedproducts = [...allProducts].slice(0, 4);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   if (!product) {
     return (
@@ -165,7 +169,14 @@ export default function ProductDetail() {
                   quantity
                 )
               }
-              className="bg-black text-white px-26 py-3 rounded-xl hover:bg-gray-900 transition cursor-pointer"
+              disabled={
+                !selectedSize || !product.inStockSizes.includes(selectedSize)
+              }
+              className={`px-26 py-3 rounded-xl transition ${
+                !selectedSize || !product.inStockSizes.includes(selectedSize)
+                  ? "bg-gray-400 text-white cursor-not-allowed"
+                  : "bg-black text-white hover:bg-gray-900 cursor-pointer"
+              }`}
             >
               Add to Cart
             </button>
