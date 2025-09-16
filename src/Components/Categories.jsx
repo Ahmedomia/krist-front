@@ -66,7 +66,7 @@ export default function Categories() {
             key={index}
             className="relative bg-[#F3F3F3] rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex justify-center items-center"
           >
-            <span className="absolute top-3 left-2/3 -translate-x-1/2 text-6xl font-bold text-gray-200 opacity-70 select-none z-0">
+            <span className="absolute top-3 left-3 text-6xl font-bold text-gray-200 select-none">
               {cat.name}
             </span>
             <img

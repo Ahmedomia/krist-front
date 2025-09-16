@@ -12,27 +12,38 @@ export default function Footer() {
           </div>
           <div className="flex items-center gap-2 text-gray-300 text-[14px]">
             <img src="/assets/phone.svg" alt="Phone" className="h-4 w-4" />
-            <p>(704) 555-0127</p>
+            <a href="tel:+17045550127" className="hover:text-white">
+              (704) 555-0127
+            </a>
           </div>
+
           <div className="flex items-center gap-2 text-gray-300 text-[14px]">
-            <img src="/assets/gmail.svg" alt="Phone" className="h-4 w-4" />
-            <p>krist@example.com</p>
+            <img src="/assets/gmail.svg" alt="Email" className="h-4 w-4" />
+            <a href="mailto:krist@example.com" className="hover:text-white">
+              krist@example.com
+            </a>
           </div>
           <div className="flex items-center gap-2 text-gray-300 text-[14px]">
             <img
               src="/assets/location.svg"
-              alt="location"
+              alt="Location"
               className="h-4 w-4"
             />
-            <p>3891 Ranchview Dr. Richardson, California 62639</p>
+            <a
+              href="https://www.google.com/maps?q=3891+Ranchview+Dr.+Richardson,+California+62639"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white"
+            >
+              3891 Ranchview Dr. Richardson, California 62639
+            </a>
           </div>
         </div>
-
         <div>
           <h3 className="text-lg font-semibold text-white mb-4">Information</h3>
           <ul className="space-y-4 text-sm">
             <li>
-              <a href="#" className="hover:text-white">
+              <a href="/ProfilePage" className="hover:text-white">
                 My Account
               </a>
             </li>
@@ -42,17 +53,12 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-white">
+              <a href="/CheckoutPage" className="hover:text-white">
                 My Cart
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-white">
-                My Wishlist
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-white">
+              <a href="/CheckoutPage" className="hover:text-white">
                 Checkout
               </a>
             </li>
@@ -116,7 +122,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
       <div className="border-t border-gray-700 mt-10 pt-4 text-sm text-gray-500 mr-14 ml-14 flex items-center relative">
         <div className="flex items-center gap-4">
           <img src="/assets/Visa.svg" alt="Visa logo" className="h-6" />
@@ -133,7 +138,7 @@ export default function Footer() {
           <img src="/assets/Amex.svg" alt="Amex logo" className="h-6" />
           <img src="/assets/PayPal.svg" alt="PayPal logo" className="h-6" />
         </div>
-        <p className="mx-auto cursor-default mr-120 text-white">
+        <p className="mx-auto cursor-default text-white">
           © {new Date().getFullYear()} Krist. All Rights Reserved.
         </p>
         <div className="flex space-x-4 absolute right-0">

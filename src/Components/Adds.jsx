@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaArrowRight, FaArrowLeft, FaAngleRight } from "react-icons/fa";
-import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 
 const slides = [
   {
@@ -25,6 +24,8 @@ const slides = [
 ];
 
 export default function Adds() {
+  const navigate = useNavigate();
+
   const [current, setCurrent] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -51,34 +52,38 @@ export default function Adds() {
           <h2 className="text-4xl font-bold mb-4 cursor-default">{title}</h2>
           <p className="text-lg text-black cursor-default">{offer}</p>
 
-          <Link
-            to="/ShopPage"
+          <button
+            onClick={() => navigate("/ShopPage")}
             className="mt-6 bg-black text-white px-6 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition"
           >
             Shop Now <FaAngleRight size={12} className="translate-y-[2px]" />
-          </Link>
+          </button>
         </div>
+        <span className="absolute bottom-4 text-[150px] font-extrabold text-white select-none z-0 pointer-events-none">
+          BEST SELLER
+        </span>
         <img
           src={image}
           alt={title}
-          className="h-full object-contain transition-all duration-700"
+          className="h-full object-contain transition-all duration-700 z-20"
         />
-        <span className="absolute bottom-2 left-80 -translate-x-1/2 text-[150px] font-extrabold text-white select-none">
-          BEST
-        </span>
+        <div className="absolute top-12 left-[800px] w-[340px] h-4 bg-white z-0"></div>
+        <div className="absolute left-[800px] w-4 h-[400px] bg-white z-20"></div>
+        <div className="absolute right-[160px] w-4 h-[400px] bg-white z-20"></div>
+        <div className="absolute bottom-12 left-[800px] w-[340px] h-4 bg-white z-20"></div>
         <button
           onClick={prevSlide}
-          className="absolute left-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-md hover:bg-black hover:text-white transition"
+          className="absolute left-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-md hover:bg-black hover:text-white transition z-30"
         >
           <FaArrowLeft size={18} />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-md hover:bg-black hover:text-white transition"
+          className="absolute right-6 top-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-md hover:bg-black hover:text-white transition z-30"
         >
           <FaArrowRight size={18} />
         </button>
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
           {slides.map((_, index) => (
             <button
               key={index}
