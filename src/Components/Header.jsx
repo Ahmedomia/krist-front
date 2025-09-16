@@ -19,7 +19,9 @@ export default function Header() {
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         <div className="flex items-center gap-2 text-2xl font-bold">
           <img src="/assets/Group.svg" alt="Logo" className="h-8" />
-          <h2 className="cursor-default font-semibold text-4xl">Krist</h2>
+          <a href="/" className="cursor-pointer font-semibold text-4xl">
+            Krist
+          </a>
         </div>
         <nav className="hidden md:flex items-center gap-8 text-gray-700 relative">
           <a href="/" className="hover:text-black">

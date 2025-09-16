@@ -35,7 +35,7 @@ export default function OTPPage() {
       <div className="hidden md:flex w-[60%] flex-col relative">
         <div className="absolute top-6 left-6 text-4xl font-bold flex items-center gap-2 z-10">
           <img src="/assets/Group.svg" alt="Logo" className="h-8" />
-          <span>Krist</span>
+          <a href="/">Krist</a>
         </div>
         <img
           src="/assets/Rectangle3.svg"
