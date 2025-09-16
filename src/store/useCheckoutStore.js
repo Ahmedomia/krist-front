@@ -18,8 +18,8 @@ const useCheckoutStore = create((set) => ({
   selectAddress: (id) => set({ selectedAddressId: id }),
   addAddress: (newAddress) => {
     const user = useUserStore.getState().user;
-    if (!user) return alert("Please login first!");
-
+/*     if (!user) return alert("Please login first!");
+ */
     set((state) => {
       const updated = [...state.addresses, { id: Date.now(), ...newAddress }];
       localStorage.setItem(`addresses_${user.id}`, JSON.stringify(updated));
