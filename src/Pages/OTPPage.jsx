@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import api from "../../api";
+import Swal from "sweetalert2";
 
 export default function OTPPage() {
   const user = useUserStore((state) => state.user);
@@ -44,9 +45,15 @@ export default function OTPPage() {
       navigate("/users/update-password");
     } catch (err) {
       console.error("Error verifying OTP:", err);
-      alert(
-        err.response?.data?.message || "Failed to verify OTP. Please try again."
-      );
+
+      Swal.fire({
+        icon: "error",
+        title: "OTP Verification Failed",
+        text:
+          err.response?.data?.message ||
+          "Failed to verify OTP. Please try again.",
+        confirmButtonColor: "#000",
+      });
     }
   };
 

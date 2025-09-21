@@ -24,7 +24,10 @@ const useCartStore = create((set) => ({
 
   addToCart: async (product, quantity = 1) => {
     const user = useUserStore.getState().user;
-    if (!user) return alert("Please login first!");
+    if (!user) {
+      window.location.href = "/user/login";
+      return;
+    }
 
     set((state) => {
       const existing = state.cartItems.find((i) => i._id === product._id);
@@ -54,6 +57,7 @@ const useCartStore = create((set) => ({
       throw err;
     }
   },
+
   updateQuantity: async (id, amount) => {
     const user = useUserStore.getState().user;
     if (!user) return;

@@ -4,9 +4,12 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import OrderSummary from "../Components/OrderSummary";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function ShippingPage() {
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({});
+
   const navigate = useNavigate();
 
   const {
@@ -35,8 +38,16 @@ export default function ShippingPage() {
   }, [loadAddresses]);
 
   const handleSaveAddress = () => {
-    if (!newAddress.name || !newAddress.mobile || !newAddress.address) {
-      return alert("Please fill all required fields");
+    const newErrors = {};
+
+    if (!newAddress.name.trim()) newErrors.name = "Name is required";
+    if (!newAddress.mobile.trim()) newErrors.mobile = "Mobile is required";
+    if (!newAddress.address.trim()) newErrors.address = "Address is required";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return; // stop saving until fixed
     }
 
     if (editingAddressId) {
@@ -45,6 +56,7 @@ export default function ShippingPage() {
     } else {
       addAddress(newAddress);
     }
+
     setNewAddress({
       name: "",
       mobile: "",
@@ -53,10 +65,17 @@ export default function ShippingPage() {
       pin: "",
       state: "",
     });
+    setErrors({});
   };
+
   const handleDeliverHere = () => {
     if (!selectedAddressId) {
-      setMessage("Please select an address first.");
+      Swal.fire({
+        icon: "warning",
+        title: "No Address Selected",
+        text: "Please select an address first.",
+        confirmButtonColor: "#000",
+      });
       return;
     }
 
@@ -183,8 +202,13 @@ export default function ShippingPage() {
               onChange={(e) =>
                 setNewAddress({ ...newAddress, name: e.target.value })
               }
-              className="border p-2 rounded-xl w-full"
+              className={`border p-2 rounded-xl w-full ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name}</p>
+            )}
             <label>Mobile Number</label>
             <input
               placeholder="Enter Mobile Number"
@@ -192,8 +216,13 @@ export default function ShippingPage() {
               onChange={(e) =>
                 setNewAddress({ ...newAddress, mobile: e.target.value })
               }
-              className="border p-2 rounded-xl w-full"
+              className={`border p-2 rounded-xl w-full ${
+                errors.mobile ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.mobile && (
+              <p className="text-red-500 text-sm">{errors.mobile}</p>
+            )}
             <label>Flat, House no., Building</label>
             <input
               placeholder="Flat, House no., Building"
@@ -201,8 +230,13 @@ export default function ShippingPage() {
               onChange={(e) =>
                 setNewAddress({ ...newAddress, address: e.target.value })
               }
-              className="border p-2 rounded-xl w-full"
+              className={`border p-2 rounded-xl w-full ${
+                errors.address ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.address && (
+              <p className="text-red-500 text-sm">{errors.address}</p>
+            )}
             <label>City</label>
             <input
               placeholder="City"

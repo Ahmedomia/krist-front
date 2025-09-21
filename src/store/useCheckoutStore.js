@@ -26,8 +26,10 @@ const useCheckoutStore = create((set) => ({
 
   addAddress: async (newAddress) => {
     const user = useUserStore.getState().user;
-    if (!user) return alert("Please login first!");
-
+    if (!user) {
+      window.location.href = "/login";
+      return;
+    }
     try {
       const payload = {
         street: newAddress.address,

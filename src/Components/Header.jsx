@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import useUserStore from "../store/userStore";
 import useCartStore from "../store/cartStore";
 import api from "../../api";
 import Skeleton from "react-loading-skeleton";
@@ -14,6 +15,8 @@ export default function Header() {
   const navigate = useNavigate();
   const cartItems = useCartStore((state) => state.cartItems);
   const setCartItems = useCartStore((state) => state.setCartItems);
+  const user = useUserStore((state) => state.user);
+  const logoutUser = useUserStore((state) => state.logout);
 
   const subtotal = (cartItems || []).reduce(
     (total, item) => total + item.price * item.quantity,
@@ -43,6 +46,11 @@ export default function Header() {
     } catch (err) {
       console.error("Error removing item:", err.response?.data || err.message);
     }
+  };
+
+  const logout = () => {
+    logoutUser();
+    navigate("/");
   };
 
   return (
@@ -312,12 +320,21 @@ export default function Header() {
               )}
             </div>
           )}
-          <button
-            onClick={() => navigate("/user/login")}
-            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-          >
-            Login
-          </button>
+          {user ? (
+            <button
+              onClick={logout}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/user/login")}
+              className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
 
