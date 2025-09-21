@@ -8,6 +8,7 @@ import { FaRegStar, FaExchangeAlt, FaRegEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
 import { fetchProductById, fetchRelatedProducts } from "../../api";
+import Skeleton from "react-loading-skeleton";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -65,7 +66,28 @@ export default function ProductDetail() {
   }, [id]);
 
   if (loading) {
-    return <div className="p-10 text-center">Loading product...</div>;
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1 p-10 grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div>
+            <Skeleton height={500} />
+            <div className="flex gap-4 mt-4">
+              <Skeleton width={80} height={80} count={3} />
+            </div>
+          </div>
+
+          <div>
+            <Skeleton width={200} height={30} />
+            <Skeleton width={150} height={20} className="mt-2" />
+            <Skeleton width={300} height={25} className="mt-4" />
+            <Skeleton count={4} className="mt-2" />
+            <Skeleton width={120} height={40} className="mt-6 rounded-xl" />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   if (error || !product) {
@@ -414,62 +436,70 @@ export default function ProductDetail() {
           <h2 className="text-3xl font-semibold">Related Products</h2>
         </div>
         <div className="grid grid-cols-4 gap-8">
-          {relatedproducts.map((item) => (
-            <div
-              key={item._id}
-              className="group rounded transition flex flex-col cursor-pointer"
-            >
-              <div
-                onClick={() => navigate(`/product/${item._id}`)}
-                className="bg-gray-50 hover:bg-[#F3F3F3] rounded h-[300px] p-4 relative flex flex-col justify-between"
-              >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="h-70 w-full object-contain mb-4"
-                />
-                <div className="absolute top-4 right-1 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
-                  <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                    <FaRegStar size={16} />
-                  </button>
-                  <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                    <FaExchangeAlt size={16} />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/product/${item._id}`);
-                    }}
-                    className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition"
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex flex-col">
+                  <Skeleton height={300} />
+                  <Skeleton width={150} height={20} className="mt-2" />
+                  <Skeleton width={100} height={15} />
+                </div>
+              ))
+            : relatedproducts.map((item) => (
+                <div
+                  key={item._id}
+                  className="group rounded transition flex flex-col cursor-pointer"
+                >
+                  <div
+                    onClick={() => navigate(`/product/${item._id}`)}
+                    className="bg-gray-50 hover:bg-[#F3F3F3] rounded h-[300px] p-4 relative flex flex-col justify-between"
                   >
-                    <FaRegEye size={16} />
-                  </button>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-70 w-full object-contain mb-4"
+                    />
+                    <div className="absolute top-4 right-1 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
+                      <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
+                        <FaRegStar size={16} />
+                      </button>
+                      <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
+                        <FaExchangeAlt size={16} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/product/${item._id}`);
+                        }}
+                        className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition"
+                      >
+                        <FaRegEye size={16} />
+                      </button>
+                    </div>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] opacity-0 group-hover:opacity-100 transition">
+                      <button className="cursor-pointer w-full bg-white text-black py-2 rounded-lg hover:bg-black hover:text-white transition">
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    onClick={() => navigate(`/product/${item._id}`)}
+                    className="p-4 text-center cursor-pointer"
+                  >
+                    <p className="text-base font-semibold">{item.name}</p>
+                    <p className="text-gray-500 text-sm">{item.brand}</p>
+                    <div className="flex gap-2 items-center justify-center mt-1">
+                      <span className="text-lg font-bold text-black">
+                        ${item.price}
+                      </span>
+                      {item.oldPrice && (
+                        <span className="text-gray-400 line-through text-sm">
+                          ${item.oldPrice}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] opacity-0 group-hover:opacity-100 transition">
-                  <button className="cursor-pointer w-full bg-white text-black py-2 rounded-lg hover:bg-black hover:text-white transition">
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-              <div
-                onClick={() => navigate(`/product/${item._id}`)}
-                className="p-4 text-center cursor-pointer"
-              >
-                <p className="text-base font-semibold">{item.name}</p>
-                <p className="text-gray-500 text-sm">{item.brand}</p>
-                <div className="flex gap-2 items-center justify-center mt-1">
-                  <span className="text-lg font-bold text-black">
-                    ${item.price}
-                  </span>
-                  {item.oldPrice && (
-                    <span className="text-gray-400 line-through text-sm">
-                      ${item.oldPrice}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+              ))}
         </div>
       </div>
       <MyIcons />

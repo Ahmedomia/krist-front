@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
 import api from "../../api";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function Header() {
   const [shopOpen, setShopOpen] = useState(false);
@@ -218,7 +220,25 @@ export default function Header() {
           {cartOpen && (
             <div className="absolute right-20 top-12 w-96 bg-white p-6 z-50">
               {loading ? (
-                <p>Loading cart...</p>
+                <div className="space-y-4 max-h-60 overflow-y-auto p-2 border-b border-gray-200">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="grid grid-cols-4 items-center gap-2"
+                    >
+                      <div className="flex items-center gap-2 col-span-2">
+                        <Skeleton width={56} height={56} borderRadius={8} />
+                        <div className="flex flex-col gap-1">
+                          <Skeleton width={100} height={14} />
+                          <Skeleton width={80} height={12} />
+                          <Skeleton width={60} height={10} />
+                        </div>
+                      </div>
+                      <Skeleton width={20} height={20} />
+                      <Skeleton circle width={24} height={24} />
+                    </div>
+                  ))}
+                </div>
               ) : error ? (
                 <p className="text-red-500">{error}</p>
               ) : (cartItems?.length ?? 0) === 0 ? (

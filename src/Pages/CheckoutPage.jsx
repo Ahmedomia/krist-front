@@ -4,6 +4,8 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import OrderSummary from "../Components/OrderSummary";
 import api from "../../api";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function CheckoutPage() {
   const cartItems = useCartStore((state) => state.cartItems);
@@ -72,7 +74,28 @@ export default function CheckoutPage() {
           </div>
 
           {loading ? (
-            <p>Loading cart...</p>
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="grid grid-cols-4 items-center py-4 gap-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton width={64} height={64} borderRadius={8} />
+                  <div>
+                    <Skeleton width={120} height={16} />
+                    <Skeleton width={80} height={12} />
+                  </div>
+                </div>
+                <Skeleton width={60} height={16} />
+                <div className="flex items-center border rounded w-fit px-2 py-1">
+                  <Skeleton width={24} height={24} />
+                  <Skeleton
+                    width={30}
+                    height={16}
+                    style={{ margin: "0 8px" }}
+                  />
+                  <Skeleton width={24} height={24} />
+                </div>
+                <Skeleton width={60} height={16} />
+              </div>
+            ))
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (

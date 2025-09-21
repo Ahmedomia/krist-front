@@ -1,3 +1,5 @@
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import Sidebar from "../Components/Sidebar";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
@@ -79,7 +81,30 @@ export default function ShopPage() {
 
         <main className="flex-1 p-6 flex flex-col">
           {loading ? (
-            <p className="text-center">Loading products...</p>
+            <div className="grid grid-cols-3 gap-4">
+              {Array.from({ length: productsPerPage }).map((_, index) => (
+                <div key={index} className="flex flex-col">
+                  <Skeleton height={330} />
+                  <div className="p-3 text-center">
+                    <Skeleton
+                      width={120}
+                      height={16}
+                      style={{ margin: "4px auto" }}
+                    />
+                    <Skeleton
+                      width={80}
+                      height={12}
+                      style={{ margin: "4px auto" }}
+                    />
+                    <Skeleton
+                      width={60}
+                      height={16}
+                      style={{ margin: "4px auto" }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : error ? (
             <p className="text-center text-red-500">{error}</p>
           ) : (
