@@ -74,11 +74,6 @@ export default function Footer() {
                 My Cart
               </a>
             </li>
-            <li>
-              <a href="/CheckoutPage" className="hover:text-white">
-                Checkout
-              </a>
-            </li>
           </ul>
         </div>
         <div>
