@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import allProducts from "../data/products";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useState, useEffect } from "react";
@@ -8,18 +7,20 @@ import MyIcons from "../Components/Icons";
 import { FaRegStar, FaExchangeAlt, FaRegEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
+import { fetchProductById, fetchRelatedProducts } from "../../api";
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const product = allProducts.find((p) => p.id === parseInt(id));
-  const [selectedImage, setSelectedImage] = useState(product?.image || "");
-  const [selectedColor, setSelectedColor] = useState(
-    product?.colors?.[0] || null
-  );
+  const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("description");
-  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || null);
   const [quantity, setQuantity] = useState(1);
-  const images = [product?.image, product?.image2].filter(Boolean);
+
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviewName, setReviewName] = useState("");
   const [reviewEmail, setReviewEmail] = useState("");
@@ -28,17 +29,55 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const addToCart = useCartStore((state) => state.addToCart);
 
-  const relatedproducts = [...allProducts].slice(0, 4);
+  const [relatedproducts, setRelatedProducts] = useState([]);
 
   useEffect(() => {
+    const loadRelated = async () => {
+      try {
+        const { data } = await fetchRelatedProducts(product._id);
+        setRelatedProducts(data);
+      } catch (err) {
+        console.error("Failed to load related products:", err);
+      }
+    };
+
+    if (product) loadRelated();
+  }, [product]);
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        setLoading(true);
+        const { data } = await fetchProductById(id);
+        setProduct(data);
+        setSelectedImage(data.image || "");
+        setSelectedColor(data.colors?.[0] || null);
+        setSelectedSize(data.sizes?.[0] || null);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load product");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getProduct();
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!product) {
+  if (loading) {
+    return <div className="p-10 text-center">Loading product...</div>;
+  }
+
+  if (error || !product) {
     return (
-      <div className="p-10 text-center text-red-500">Product not found</div>
+      <div className="p-10 text-center text-red-500">
+        {error || "Product not found"}
+      </div>
     );
   }
+
+  const images = [product?.image, product?.image2].filter(Boolean);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -158,7 +197,7 @@ export default function ProductDetail() {
               onClick={() =>
                 addToCart(
                   {
-                    id: product.id,
+                    id: product._id,
                     name: product.name,
                     brand: product.brand,
                     price: product.price,
@@ -377,11 +416,11 @@ export default function ProductDetail() {
         <div className="grid grid-cols-4 gap-8">
           {relatedproducts.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="group rounded transition flex flex-col cursor-pointer"
             >
               <div
-                onClick={() => navigate(`/product/${item.id}`)}
+                onClick={() => navigate(`/product/${item._id}`)}
                 className="bg-gray-50 hover:bg-[#F3F3F3] rounded h-[300px] p-4 relative flex flex-col justify-between"
               >
                 <img
@@ -399,7 +438,7 @@ export default function ProductDetail() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/product/${item.id}`);
+                      navigate(`/product/${item._id}`);
                     }}
                     className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition"
                   >
@@ -413,7 +452,7 @@ export default function ProductDetail() {
                 </div>
               </div>
               <div
-                onClick={() => navigate(`/product/${item.id}`)}
+                onClick={() => navigate(`/product/${item._id}`)}
                 className="p-4 text-center cursor-pointer"
               >
                 <p className="text-base font-semibold">{item.name}</p>

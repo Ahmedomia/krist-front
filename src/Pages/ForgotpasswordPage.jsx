@@ -1,13 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Logging in:", email);
+    setError("");
+    setLoading(true);
+
+    try {
+      const { data } = await api.post("/users/forgot-password", { email });
+
+      console.log("Reset token response:", data);
+      localStorage.setItem("resetToken", data.resetToken);
+
+      navigate("/OTP");
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,9 +55,12 @@ export default function ForgotPassword() {
 
           <h1 className="text-3xl font-bold mb-2">Forgot Password</h1>
           <p className="text-gray-500 mb-6">
-            Enter your registered email address. we’ll send you a code to reset
+            Enter your registered email address. We’ll send you a code to reset
             your password.
           </p>
+
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -54,12 +74,13 @@ export default function ForgotPassword() {
               required
             />
           </div>
+
           <button
             type="submit"
-            onClick={() => navigate("/OTP")}
-            className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-900 transition"
+            disabled={loading}
+            className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-900 transition disabled:opacity-50"
           >
-            Send OTP
+            {loading ? "Sending..." : "Send OTP"}
           </button>
         </form>
       </div>

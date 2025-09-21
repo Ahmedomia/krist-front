@@ -12,7 +12,7 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import useUserStore from "../store/userStore";
 import { useState, useEffect } from "react";
-
+import { getUserProfileApi, updateUserProfile } from "../../api";
 export default function ProfilePage() {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
@@ -28,21 +28,43 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (user) {
-      setProfile({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        phone: user.phone || "",
-        email: user.email || "",
-        address: user.address || "",
-      });
-    }
-  }, [user]);
+    const fetchProfile = async () => {
+      try {
+        const { data } = await getUserProfileApi();
+        updateUser(data);
+        setProfile({
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          phone: data.phone || "",
+          email: data.email || "",
+          address: data.address || "",
+        });
+      } catch (err) {
+        console.error(
+          "Failed to fetch profile:",
+          err.response?.data || err.message
+        );
+      }
+    };
+
+    fetchProfile();
+  }, [updateUser]);
+
   const handleChange = (field, value) => {
     setProfile((prev) => ({ ...prev, [field]: value }));
   };
-  const handleSave = () => {
-    updateUser(profile);
+
+  const handleSave = async () => {
+    try {
+      const { data } = await updateUserProfile(profile);
+      updateUser(data);
+      localStorage.setItem("userInfo", JSON.stringify(data));
+    } catch (err) {
+      console.error(
+        "Profile update failed:",
+        err.response?.data || err.message
+      );
+    }
   };
 
   const menuItems = [
@@ -82,11 +104,11 @@ export default function ProfilePage() {
           <ul className="space-y-2">
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activeItem === item.id;
+              const isActive = activeItem === item._id;
               return (
                 <li
-                  key={item.id}
-                  onClick={() => setActiveItem(item.id)}
+                  key={item._id}
+                  onClick={() => setActiveItem(item._id)}
                   className={`flex items-center gap-2 cursor-pointer rounded p-2 transition ${
                     isActive
                       ? "bg-black text-white font-semibold"

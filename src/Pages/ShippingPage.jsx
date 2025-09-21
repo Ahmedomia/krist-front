@@ -59,7 +59,8 @@ export default function ShippingPage() {
       setMessage("Please select an address first.");
       return;
     }
-    const selected = addresses.find((a) => a.id === selectedAddressId);
+
+    const selected = addresses.find((a) => a._id === selectedAddressId);
 
     if (selected) {
       setMessage("");
@@ -101,7 +102,7 @@ export default function ShippingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-[800px]">
             {addresses.map((addr) => (
               <div
-                key={addr.id}
+                key={addr._id}
                 className={`p-4 border rounded flex flex-col relative ${
                   selectedAddressId === addr.id
                     ? "border-black shadow"
@@ -110,8 +111,8 @@ export default function ShippingPage() {
               >
                 <input
                   type="checkbox"
-                  checked={selectedAddressId === addr.id}
-                  onChange={() => selectAddress(addr.id)}
+                  checked={selectedAddressId === addr._id}
+                  onChange={() => selectAddress(addr._id)}
                   className="absolute top-4 right-4 w-5 h-5 accent-black cursor-pointer"
                 />
                 <p className="font-semibold">{addr.name}</p>
@@ -128,7 +129,7 @@ export default function ShippingPage() {
                 <div className="flex mt-2 gap-4">
                   <button
                     onClick={() => {
-                      setEditingAddressId(addr.id);
+                      setEditingAddressId(addr._id);
                       setNewAddress({
                         name: addr.name,
                         mobile: addr.mobile,

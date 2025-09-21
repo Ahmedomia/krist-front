@@ -1,21 +1,37 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match!");
       return;
     }
-    console.log("Password changed:", password);
-    setSuccess(true);
+
+    try {
+      const otpFromUserInput = localStorage.getItem("otpFromUserInput");
+      const emailForReset = localStorage.getItem("emailForReset");
+
+      await api.post("/users/reset-password", {
+        email: emailForReset,
+        token: otpFromUserInput,
+        newPassword: password,
+      });
+
+      setSuccess(true);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to reset password.");
+    }
   };
 
   return (
@@ -49,6 +65,7 @@ export default function ResetPassword() {
             Enter your new password below. Make sure it’s different from your
             old one.
           </p>
+          {error && <p className="text-red-500 mb-4">{error}</p>}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               New Password
@@ -108,7 +125,7 @@ export default function ResetPassword() {
               Your password has been updated successfully
             </p>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/user/login")}
               className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-900 transition"
             >
               Back to Login

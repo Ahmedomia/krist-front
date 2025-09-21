@@ -23,7 +23,7 @@ const slides = [
   },
 ];
 
-export default function Adds() {
+export default function Carousel() {
   const navigate = useNavigate();
 
   const [current, setCurrent] = useState(0);

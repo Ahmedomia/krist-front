@@ -1,7 +1,24 @@
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
+import { useState } from "react";
+import api from "../../api";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleSubscribe = async () => {
+    try {
+      const { data } = await api.post("/subscribe", { email });
+      setMessage("✅ " + data.message);
+      setEmail("");
+    } catch (err) {
+      setMessage("❌ Failed to subscribe");
+      console.error(err);
+    }
+    setTimeout(() => setMessage(""), 3000);
+  };
+
   return (
     <footer className="bg-black text-gray-300 pt-12 pb-6 mt-16">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -48,7 +65,7 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="/Login" className="hover:text-white">
+              <a href="/user/login" className="hover:text-white">
                 Login
               </a>
             </li>
@@ -112,13 +129,19 @@ export default function Footer() {
               />
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your Email"
                 className="flex-1 px-3 py-2 outline-none text-sm text-[#FDFDFD]"
               />
-              <button className="bg-black text-white px-4 py-2 cursor-pointer transition">
+              <button
+                onClick={handleSubscribe}
+                className="bg-black text-white px-4 py-2 cursor-pointer transition"
+              >
                 <FaArrowRight />
               </button>
             </div>
+            {message && <p className="text-sm mt-2">{message}</p>}
           </div>
         </div>
       </div>
@@ -138,7 +161,7 @@ export default function Footer() {
           <img src="/assets/Amex.svg" alt="Amex logo" className="h-6" />
           <img src="/assets/PayPal.svg" alt="PayPal logo" className="h-6" />
         </div>
-        <p className="mx-auto cursor-default text-white">
+        <p className="pl-70 cursor-default text-white">
           © {new Date().getFullYear()} Krist. All Rights Reserved.
         </p>
         <div className="flex space-x-4 absolute right-0">

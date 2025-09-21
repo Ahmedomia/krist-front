@@ -1,7 +1,10 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import useUserStore from "../store/userStore";
+import api from "../../api";
 
 export default function OTPPage() {
+  const user = useUserStore((state) => state.user);
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputRefs = useRef([]);
   const navigate = useNavigate();
@@ -23,11 +26,28 @@ export default function OTPPage() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const otpValue = otp.join("");
-    console.log("Verifying OTP:", otpValue);
-    navigate("/Newpassword");
+
+    try {
+      const { data } = await api.post("/users/verify-otp", {
+        email: user.email,
+        otp: otpValue,
+      });
+
+      console.log("OTP Verified:", data);
+
+      localStorage.setItem("otpFromUserInput", data.resetToken);
+      localStorage.setItem("emailForReset", user.email);
+
+      navigate("/users/update-password");
+    } catch (err) {
+      console.error("Error verifying OTP:", err);
+      alert(
+        err.response?.data?.message || "Failed to verify OTP. Please try again."
+      );
+    }
   };
 
   return (
@@ -43,6 +63,7 @@ export default function OTPPage() {
           className="w-full h-full object-contain"
         />
       </div>
+
       <div className="w-full md:w-[40%] flex items-center justify-center px-8">
         <form onSubmit={handleSubmit} className="w-full max-w-sm">
           <button
@@ -59,7 +80,7 @@ export default function OTPPage() {
           <h1 className="text-3xl font-bold mb-2">Enter OTP</h1>
           <p className="text-gray-500 mb-6">
             We have sent a 6-digit code to your registered email
-            <span className="font-medium"> robertfox@example.com</span>
+            <span className="font-medium"> {user.email}</span>
           </p>
           <div className="flex justify-between gap-2 mb-6">
             {otp.map((digit, index) => (

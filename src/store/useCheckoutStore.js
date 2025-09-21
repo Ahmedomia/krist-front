@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import useUserStore from "./userStore";
 import useCartStore from "./cartStore";
+import api from "../../api";
 
 const useCheckoutStore = create((set) => ({
   addresses: [],
@@ -8,56 +9,72 @@ const useCheckoutStore = create((set) => ({
   discountCode: "",
   discountAmount: 0,
   deliveryCharge: 5,
-  loadAddresses: () => {
+
+  loadAddresses: async () => {
     const user = useUserStore.getState().user;
     if (!user) return;
 
-    const saved = localStorage.getItem(`addresses_${user.id}`);
-    set({ addresses: saved ? JSON.parse(saved) : [] });
+    try {
+      const { data } = await api.get("/addresses");
+      set({ addresses: data });
+    } catch (err) {
+      console.error("Failed to load addresses:", err);
+    }
   },
+
   selectAddress: (id) => set({ selectedAddressId: id }),
-  addAddress: (newAddress) => {
+
+  addAddress: async (newAddress) => {
     const user = useUserStore.getState().user;
     if (!user) return alert("Please login first!");
 
-    set((state) => {
-      const updated = [...state.addresses, { id: Date.now(), ...newAddress }];
-      localStorage.setItem(`addresses_${user.id}`, JSON.stringify(updated));
-      return { addresses: updated };
-    });
-  },
-  editAddress: (id, updatedData) => {
-    const user = useUserStore.getState().user;
-    if (!user) return;
+    try {
+      const payload = {
+        street: newAddress.address,
+        city: newAddress.city,
+        state: newAddress.state,
+        zip: newAddress.pin,
+        country: newAddress.country || "Egypt",
+      };
 
-    set((state) => {
-      const updated = state.addresses.map((a) =>
-        a.id === id ? { ...a, ...updatedData } : a
-      );
-      localStorage.setItem(`addresses_${user.id}`, JSON.stringify(updated));
-      return { addresses: updated };
-    });
+      const { data } = await api.post("/addresses", payload);
+      set((state) => ({ addresses: [...state.addresses, data] }));
+    } catch (err) {
+      console.error("Failed to add address:", err);
+    }
   },
-  deleteAddress: (id) => {
-    const user = useUserStore.getState().user;
-    if (!user) return;
 
-    set((state) => {
-      const updated = state.addresses.filter((a) => a.id !== id);
-      localStorage.setItem(`addresses_${user.id}`, JSON.stringify(updated));
-      return {
-        addresses: updated,
+  editAddress: async (id, updatedData) => {
+    try {
+      const { data } = await api.put(`/addresses/${id}`, updatedData);
+      set((state) => ({
+        addresses: state.addresses.map((a) => (a._id === id ? data : a)),
+      }));
+    } catch (err) {
+      console.error("Failed to edit address:", err);
+    }
+  },
+
+  deleteAddress: async (id) => {
+    try {
+      await api.delete(`/addresses/${id}`);
+      set((state) => ({
+        addresses: state.addresses.filter((a) => a._id !== id),
         selectedAddressId:
           state.selectedAddressId === id ? null : state.selectedAddressId,
-      };
-    });
+      }));
+    } catch (err) {
+      console.error("Failed to delete address:", err);
+    }
   },
+
   applyDiscount: (code) =>
     set(() => {
       let discount = 0;
       if (code === "FLAT50") discount = 50;
       return { discountCode: code, discountAmount: discount };
     }),
+
   getTotals: () => {
     const { cartItems } = useCartStore.getState();
     const { discountAmount, deliveryCharge } = useCheckoutStore.getState();

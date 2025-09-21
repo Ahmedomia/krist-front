@@ -16,11 +16,11 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/Forgotpassword" element={<ForgotPassword />} />
+      <Route path="/user/login" element={<LoginPage />} />
+      <Route path="/users/signup" element={<SignupPage />} />
+      <Route path="/users/forgot-password" element={<ForgotPassword />} />
       <Route path="/OTP" element={<OTPPage />} />
-      <Route path="/Newpassword" element={<NewPassword />} />
+      <Route path="/users/update-password" element={<NewPassword />} />
       <Route path="/ShopPage" element={<ShopPage />} />
       <Route path="/ProfilePage" element={<ProfilePage />} />
       <Route path="/CheckoutPage" element={<CheckoutPage />} />

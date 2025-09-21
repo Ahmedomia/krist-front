@@ -1,46 +1,50 @@
 import { create } from "zustand";
+import api from "../../api";
 
 const useUserStore = create((set) => ({
-  users: JSON.parse(localStorage.getItem("users")) || [],
-  user: JSON.parse(localStorage.getItem("user")) || null,
+  user: JSON.parse(localStorage.getItem("userInfo")) || null,
 
-  signup: (userData) =>
+  setUser: (userData) => {
+    localStorage.setItem("userInfo", JSON.stringify(userData));
+    set({ user: userData });
+  },
+
+  updateUser: (newData) =>
     set((state) => {
-      const updatedUsers = [...state.users, userData];
-      localStorage.setItem("users", JSON.stringify(updatedUsers));
-      localStorage.setItem("user", JSON.stringify(userData));
-      return { users: updatedUsers, user: userData };
+      const updatedUser = { ...state.user, ...newData };
+      localStorage.setItem("userInfo", JSON.stringify(updatedUser));
+      return { user: updatedUser };
     }),
 
-  login: (email, password) =>
-    set((state) => {
-      const existingUser = state.users.find(
-        (u) => u.email === email && u.password === password
-      );
-      if (existingUser) {
-        localStorage.setItem("user", JSON.stringify(existingUser));
-        return { user: existingUser };
-      }
-      return state;
-    }),
+  signup: async (userData) => {
+    try {
+      const { data } = await api.post("/users/signup", {
+        name: `${userData.firstName} ${userData.lastName}`,
+        email: userData.email,
+        password: userData.password,
+      });
 
-  updateUser: (updatedData) =>
-    set((state) => {
-      if (!state.user) return state;
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      set({ user: data });
+      return data;
+    } catch (error) {
+      throw error.response?.data?.message || "Signup failed";
+    }
+  },
 
-      const updatedUser = { ...state.user, ...updatedData };
-      const updatedUsers = state.users.map((u) =>
-        u.id === state.user.id ? updatedUser : u
-      );
-
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      localStorage.setItem("users", JSON.stringify(updatedUsers));
-
-      return { user: updatedUser, users: updatedUsers };
-    }),
+  login: async (email, password) => {
+    try {
+      const { data } = await api.post("/users/login", { email, password });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      set({ user: data });
+      return data;
+    } catch (error) {
+      throw error.response?.data?.message || "Login failed";
+    }
+  },
 
   logout: () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("userInfo");
     set({ user: null });
   },
 }));

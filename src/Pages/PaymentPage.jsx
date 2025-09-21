@@ -4,6 +4,7 @@ import Header from "../Components/Header";
 import OrderSummary from "../Components/OrderSummary";
 import usePaymentStore from "../store/PaymentStore";
 import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 export default function PaymentPage() {
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -16,7 +17,7 @@ export default function PaymentPage() {
   const setCardDetails = usePaymentStore((state) => state.setCardDetails);
   const navigate = useNavigate();
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (paymentMethod === "card") {
       const newErrors = {};
       if (!cardNumber) newErrors.cardNumber = "Card Number is required";
@@ -25,13 +26,38 @@ export default function PaymentPage() {
       if (!cvv) newErrors.cvv = "CVV is required";
 
       setErrors(newErrors);
-
       if (Object.keys(newErrors).length > 0) return;
-      console.log("card data:", cardNumber);
-      setCardDetails({ cardNumber, cardName, expiry, cvv });
+
+      setCardDetails({
+        cardNumber,
+        cardName,
+        expiry,
+        cvv,
+        method: paymentMethod,
+      });
+
+      try {
+        await api.post("/payments", {
+          method: paymentMethod,
+          cardNumber,
+          cardName,
+          expiry,
+          cvv,
+        });
+      } catch (err) {
+        console.error("Payment API error:", err);
+        return;
+      }
     } else {
       setErrors({});
       setCardDetails({ method: paymentMethod });
+
+      try {
+        await api.post("/payments", { method: paymentMethod });
+      } catch (err) {
+        console.error("Payment API error:", err);
+        return;
+      }
     }
 
     navigate("/ReviewPage");

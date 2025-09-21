@@ -1,17 +1,27 @@
 import { FaRegStar, FaExchangeAlt, FaRegEye } from "react-icons/fa";
-import allProducts from "../data/products";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchBestSellers } from "../../api";
 
 export default function BestSeller() {
   const navigate = useNavigate();
   const addToCart = useCartStore((state) => state.addToCart);
   const [notification, setNotification] = useState("");
 
-  const bestSellers = [...allProducts]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 8);
+  const [bestSellers, setBestSellers] = useState([]);
+
+    useEffect(() => {
+      const loadBestSellers = async () => {
+        try {
+          const { data } = await fetchBestSellers();
+          setBestSellers(data);
+        } catch (err) {
+          console.error("Failed to load best sellers", err);
+        }
+      };
+      loadBestSellers();
+    }, []);
 
   const handleAddToCart = (item) => {
     addToCart(item);
@@ -32,7 +42,10 @@ export default function BestSeller() {
       </div>
       <div className="grid grid-cols-4 gap-8">
         {bestSellers.map((item) => (
-          <div key={item.id} className="group rounded transition flex flex-col">
+          <div
+            key={item._id}
+            className="group rounded transition flex flex-col"
+          >
             <div className="bg-gray-50 hover:bg-[#F3F3F3] rounded h-[300px] p-4 relative flex flex-col justify-between">
               <img
                 src={item.image}
@@ -47,7 +60,7 @@ export default function BestSeller() {
                   <FaExchangeAlt size={16} />
                 </button>
                 <button
-                  onClick={() => navigate(`/product/${item.id}`)}
+                  onClick={() => navigate(`/product/${item._id}`)}
                   className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition"
                 >
                   <FaRegEye size={16} />

@@ -1,4 +1,4 @@
-import Adds from "../Components/Adds";
+import Carousel from "../Components/Carousel";
 import BestSeller from "../Components/BestSeller";
 import Categories from "../Components/Categories";
 import Deals from "../Components/Deals";
@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
-      <Adds />
+      <Carousel />
       <Categories />
       <BestSeller />
       <Deals />

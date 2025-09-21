@@ -22,16 +22,27 @@ export default function Sidebar({ products = [], setFilteredProducts }) {
     "Winter Wear",
   ];
 
-  const colors = ["red", "blue", "orange", "black", "green", "yellow ", "Brown"];
+  const colors = ["red", "blue", "orange", "black", "green", "yellow", "brown"];
   const sizes = ["S", "M", "L", "XL", "XXL", "XXXL"];
+
   const colorCounts = colors.reduce((acc, color) => {
-    acc[color] = products.filter((p) => p.color === color).length;
+    acc[color] = products.filter(
+      (p) =>
+        Array.isArray(p.colors) &&
+        p.colors.some((c) => c.toLowerCase() === color.toLowerCase())
+    ).length;
     return acc;
   }, {});
+
   const sizeCounts = sizes.reduce((acc, size) => {
-    acc[size] = products.filter((p) => p.size === size).length;
+    acc[size] = products.filter(
+      (p) =>
+        Array.isArray(p.sizes) &&
+        p.sizes.some((s) => s.toUpperCase() === size.toUpperCase())
+    ).length;
     return acc;
   }, {});
+
   const handleCategoryChange = (category) =>
     setSelectedCategories((prev) =>
       prev.includes(category)
@@ -48,6 +59,7 @@ export default function Sidebar({ products = [], setFilteredProducts }) {
     setSelectedSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
     );
+
   useEffect(() => {
     if (!Array.isArray(products)) return;
     let filtered = [...products];
@@ -64,13 +76,17 @@ export default function Sidebar({ products = [], setFilteredProducts }) {
 
     if (selectedColors.length > 0) {
       filtered = filtered.filter(
-        (p) => p.color && selectedColors.includes(p.color)
+        (p) =>
+          Array.isArray(p.colors) &&
+          p.colors.some((c) => selectedColors.includes(c.toLowerCase()))
       );
     }
 
     if (selectedSizes.length > 0) {
       filtered = filtered.filter(
-        (p) => p.size && selectedSizes.includes(p.size)
+        (p) =>
+          Array.isArray(p.sizes) &&
+          p.sizes.some((s) => selectedSizes.includes(s.toUpperCase()))
       );
     }
 
@@ -87,7 +103,6 @@ export default function Sidebar({ products = [], setFilteredProducts }) {
           Product Categories
           {openCategories ? <FaChevronUp /> : <FaChevronDown />}
         </h3>
-
         {openCategories && (
           <ul className="space-y-2 text-gray-700">
             {categories.map((cat) => (
@@ -123,7 +138,6 @@ export default function Sidebar({ products = [], setFilteredProducts }) {
           Filter by Color
           {openColors ? <FaChevronUp /> : <FaChevronDown />}
         </h3>
-
         {openColors && (
           <ul className="space-y-2">
             {colors.map((color) => (
@@ -134,9 +148,7 @@ export default function Sidebar({ products = [], setFilteredProducts }) {
               >
                 <span
                   className={`w-5 h-5 rounded border ${
-                    selectedColors.includes(color)
-                      ? "ring-1 ring-black"
-                      : ""
+                    selectedColors.includes(color) ? "ring-1 ring-black" : ""
                   }`}
                   style={{ backgroundColor: color }}
                 ></span>
@@ -157,7 +169,6 @@ export default function Sidebar({ products = [], setFilteredProducts }) {
           Filter by Size
           {openSizes ? <FaChevronUp /> : <FaChevronDown />}
         </h3>
-
         {openSizes && (
           <ul className="space-y-2">
             {sizes.map((size) => (

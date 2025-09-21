@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
+import api from "../../api";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -8,23 +9,25 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const login = useUserStore((state) => state.login);
+  const setUser = useUserStore((state) => state.setUser);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    const prevUser = useUserStore
-      .getState()
-      .users.find((u) => u.email === email && u.password === password);
+    try {
+      const { data } = await api.post("/users/login", { email, password });
 
-    if (!prevUser) {
-      setError("Invalid email or password. Please sign up first.");
-      return;
+      setUser(data);
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      console.log("Logged in:", data);
+      navigate("/");
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
     }
-
-    login(email, password);
-    console.log("Logged in:", prevUser);
-    navigate("/");
   };
 
   return (
@@ -84,7 +87,7 @@ export default function LoginPage() {
               Remember Me
             </label>
             <a
-              href="/Forgotpassword"
+              href="/users/forgot-password"
               className="text-gray-600 hover:text-black"
             >
               Forgot Password?
@@ -98,7 +101,8 @@ export default function LoginPage() {
             Login
           </button>
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/users/signup")}
+            type="button"
             className="w-full bg-white text-black border py-2 rounded-lg hover:bg-gray-200 transition"
           >
             Signup

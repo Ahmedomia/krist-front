@@ -1,30 +1,37 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
+import api from "../../api";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-const signup = useUserStore((state) => state.signup);
- 
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const setUser = useUserStore((state) => state.setUser);
 
-  const newUser = {
-    id: Date.now() + Math.floor(Math.random() * 1000),
-    firstName,
-    lastName,
-    email,
-    password,
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const { data } = await api.post("/users/signup", {
+        name: `${firstName} ${lastName}`,
+        email,
+        password,
+      });
+
+      setUser(data);
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Something went wrong");
+    }
   };
-
-  signup(newUser);
-  console.log("Signed up:", newUser);
-  navigate("/login");
-};
 
   return (
     <div className="flex h-screen">
@@ -43,6 +50,9 @@ const handleSubmit = (e) => {
         <form onSubmit={handleSubmit} className="w-full max-w-sm">
           <h1 className="text-3xl font-bold mb-2">Create New Account</h1>
           <p className="text-gray-500 mb-6">Please enter details</p>
+
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               First Name
