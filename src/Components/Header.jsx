@@ -5,12 +5,17 @@ import useCartStore from "../store/cartStore";
 import api from "../../api";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import debounce from "lodash.debounce";
+import { useCallback } from "react";
 
 export default function Header() {
   const [shopOpen, setShopOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const navigate = useNavigate();
   const cartItems = useCartStore((state) => state.cartItems);
@@ -52,6 +57,40 @@ export default function Header() {
     logoutUser();
     navigate("/");
   };
+
+  const handleSearch = useCallback(
+    debounce(async (q) => {
+      if (!q.trim()) {
+        setResults([]);
+        setSearchLoading(false);
+        return;
+      }
+      try {
+        setSearchLoading(true);
+        const { data } = await api.get(`/products?search=${q}`);
+        setResults(data);
+      } catch (err) {
+        console.error("Search error:", err.message);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".search-container")) {
+        setResults([]);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    return () => handleSearch.cancel();
+  }, [handleSearch]);
 
   return (
     <header className="w-full bg-white relative z-50">
@@ -195,27 +234,79 @@ export default function Header() {
               </div>
             )}
           </div>
-          <a href="#" className="hover:text-black">
+          <a href="/OurStory" className="hover:text-black">
             Our Story
           </a>
-          <a href="#" className="hover:text-black">
-            Blog
-          </a>
-          <a href="#" className="hover:text-black">
+          <a href="/ContactUs" className="hover:text-black">
             Contact Us
           </a>
         </nav>
 
         <div className="flex items-center gap-4 relative">
+          <div className="relative search-container">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                handleSearch(e.target.value);
+              }}
+              placeholder="Search products..."
+              className="border rounded px-3 py-2"
+            />
+
+            {(searchLoading || results.length > 0) && (
+              <div className="absolute top-full mt-1 w-64 bg-white shadow rounded">
+                {searchLoading && (
+                  <div className="p-2 text-gray-400 italic">
+                    Searching for “{query}”...
+                  </div>
+                )}
+
+                {!searchLoading &&
+                  results.map((r) => (
+                    <div
+                      key={r._id}
+                      onClick={() => navigate(`/product/${r._id}`)}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {r.name}
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {results.length > 0 && (
+              <div className="absolute top-full mt-1 w-64 bg-white shadow rounded">
+                {results.map((r) => (
+                  <div
+                    key={r._id}
+                    onClick={() => navigate(`/product/${r._id}`)}
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    {r.name}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <button className="text-gray-700 hover:text-black">
-            <img src="/assets/search.svg" alt="search" />
+            <img
+              src="/assets/search.svg"
+              alt="search"
+              className="cursor-pointer"
+            />
           </button>
           <button className="text-gray-700 hover:text-black">
-            <img src="/assets/fav.svg" alt="favourite" />
+            <img
+              src="/assets/fav.svg"
+              alt="favourite"
+              className="cursor-pointer"
+            />
           </button>
           <button
             onClick={() => setCartOpen((prev) => !prev)}
-            className="text-gray-700 hover:text-black relative"
+            className="text-gray-700 hover:text-black relative cursor-pointer"
           >
             <img src="/assets/cart.svg" alt="cart" />
             {(cartItems?.length ?? 0) > 0 && (

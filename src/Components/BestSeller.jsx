@@ -1,4 +1,4 @@
-import { FaRegStar, FaExchangeAlt, FaRegEye } from "react-icons/fa";
+import { FaHeart, FaExchangeAlt, FaRegEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
 import { useState, useEffect } from "react";
@@ -54,7 +54,7 @@ export default function BestSeller() {
               />
               <div className="absolute top-4 right-1 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
                 <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                  <FaRegStar size={16} />
+                  <FaHeart size={16} />
                 </button>
                 <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
                   <FaExchangeAlt size={16} />

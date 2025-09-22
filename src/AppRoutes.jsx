@@ -14,6 +14,8 @@ import PaymentPage from "./Pages/PaymentPage";
 import ReviewPage from "./Pages/ReviewPage";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import TermsConditions from "./Pages/TermsConditions";
+import ContactUs from "./Pages/ContactUs";
+import OurStory from "./Pages/OurStory";
 function App() {
   return (
     <Routes>
@@ -32,6 +34,8 @@ function App() {
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-and-conditions" element={<TermsConditions />} />
+      <Route path="/ContactUs" element={<ContactUs />} />
+      <Route path="/OurStory" element={<OurStory />} />
     </Routes>
   );
 }

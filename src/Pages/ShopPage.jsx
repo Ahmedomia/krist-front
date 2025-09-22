@@ -6,7 +6,7 @@ import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
-  FaRegStar,
+  FaHeart,
   FaExchangeAlt,
   FaRegEye,
   FaArrowRight,
@@ -120,7 +120,7 @@ export default function ShopPage() {
                       />
                       <div className="absolute top-3 right-1 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
                         <button className="bg-white p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                          <FaRegStar size={16} />
+                          <FaHeart size={16} />
                         </button>
                         <button className="bg-white p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
                           <FaExchangeAlt size={16} />
