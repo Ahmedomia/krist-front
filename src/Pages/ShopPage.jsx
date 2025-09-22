@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import MyIcons from "../Components/Icons";
 import useCartStore from "../store/cartStore";
-import api, { fetchProducts, addToCartApi } from "../../api";
+import { fetchProducts } from "../../api";
 
 export default function ShopPage() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const productsPerPage = 15;
-  const setCartItems = useCartStore((state) => state.setCartItems);
+  const addToCart = useCartStore((state) => state.addToCart);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -51,10 +51,7 @@ export default function ShopPage() {
 
   const handleAddToCart = async (item) => {
     try {
-      await addToCartApi(item._id, 1);
-      const { data } = await api.get("/cart");
-      setCartItems(data.cartItems ?? []);
-
+      await addToCart(item, 1);
       setNotification(`${item.name} added to cart!`);
       setTimeout(() => setNotification(""), 2000);
     } catch (err) {
