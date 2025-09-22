@@ -8,6 +8,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import debounce from "lodash.debounce";
 import { useCallback } from "react";
+import { FiLogOut } from "react-icons/fi";
 
 export default function Header() {
   const [shopOpen, setShopOpen] = useState(false);
@@ -138,7 +139,7 @@ export default function Header() {
           <div className="relative">
             <button
               onClick={() => setShopOpen((prev) => !prev)}
-              className="hover:text-black flex items-center gap-1"
+              className="hover:text-black flex items-center gap-1 cursor-pointer"
             >
               Shop
               <svg
@@ -160,71 +161,169 @@ export default function Header() {
               <div className="absolute left-1/2 -translate-x-1/3 mt-2 w-[1000px] bg-white rounded-lg shadow-lg grid grid-cols-4 p-6 gap-6 z-50">
                 <div>
                   <h3 className="font-bold mb-2">Men</h3>
-                  <a href="#" className="block py-1 hover:text-black">
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?category=Men&subcategory=T-Shirts")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     T-Shirts
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Men&subcategory=Casual Shirts"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Casual Shirts
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Men&subcategory=Formal Shirts"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Formal Shirts
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?category=Men&subcategory=Jackets")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Jackets
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Men&subcategory=Blazers & Coats"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Blazers & Coats
-                  </a>
+                  </button>
                   <h4 className="font-semibold mt-3">Indian & Festive Wear</h4>
-                  <a href="#" className="block py-1 hover:text-black">
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Men&subcategory=Kurtas & Kurta Sets"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Kurtas & Kurta Sets
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?category=Men&subcategory=Sherwanis")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Sherwanis
-                  </a>
+                  </button>
                 </div>
                 <div>
                   <h3 className="font-bold mb-2">Women</h3>
-                  <a href="#" className="block py-1 hover:text-black">
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Women&subcategory=Kurtas & Suits"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Kurtas & Suits
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?category=Women&subcategory=Sarees")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Sarees
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Women&subcategory=Ethnic Wear"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Ethnic Wear
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Women&subcategory=Lehenga Cholis"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Lehenga Cholis
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(
+                        "/ShopPage?category=Winter Wear&subcategory=Jackets"
+                      )
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Jackets
-                  </a>
+                  </button>
                   <h4 className="font-semibold mt-3">Western Wear</h4>
-                  <a href="#" className="block py-1 hover:text-black">
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?category=Men&subcategory=Dresses")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Dresses
-                  </a>
+                  </button>
                   <a href="#" className="block py-1 hover:text-black">
                     Jumpsuits
                   </a>
                 </div>
                 <div>
                   <h3 className="font-bold mb-2">Footwear</h3>
-                  <a href="#" className="block py-1 hover:text-black">
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Sneakers")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Flats
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Shoes")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Casual Shoes
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Heels")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Heels
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Boots")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Boots
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?subcategory=Sports Shoes & Floaters")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Sports Shoes & Floaters
-                  </a>
+                  </button>
                   <h4 className="font-semibold mt-3">Product Features</h4>
                   <a href="#" className="block py-1 hover:text-black">
                     360 Product Viewer
@@ -235,30 +334,58 @@ export default function Header() {
                 </div>
                 <div>
                   <h3 className="font-bold mb-2">Kids</h3>
-                  <a href="#" className="block py-1 hover:text-black">
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=T-Shirts")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     T-Shirts
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=T-Shirts")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Shirts
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Jeans")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Jeans
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Trousers")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Trousers
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Party Wear")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Party Wear
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?subcategory=Innerwear & Thermal")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Innerwear & Thermal
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate("/ShopPage?subcategory=Track Pants")
+                    }
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Track Pants
-                  </a>
-                  <a href="#" className="block py-1 hover:text-black">
+                  </button>
+                  <button
+                    onClick={() => navigate("/ShopPage?subcategory=Value Pack")}
+                    className="block py-1 hover:text-black cursor-pointer"
+                  >
                     Value Pack
-                  </a>
+                  </button>
                 </div>
               </div>
             )}
@@ -507,11 +634,11 @@ export default function Header() {
             </div>
           )}
           {user ? (
-            <button
-              onClick={logout}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-            >
-              Logout
+            <button onClick={logout}>
+              <FiLogOut
+                size={24}
+                className="hover:text-red-500 cursor-pointer"
+              />
             </button>
           ) : (
             <button

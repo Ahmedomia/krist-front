@@ -1,4 +1,5 @@
 import Skeleton from "react-loading-skeleton";
+import { useLocation } from "react-router-dom";
 import "react-loading-skeleton/dist/skeleton.css";
 import Sidebar from "../Components/Sidebar";
 import Header from "../Components/Header";
@@ -34,6 +35,27 @@ export default function ShopPage() {
   const productsPerPage = 15;
 
   const addToCart = useCartStore((state) => state.addToCart);
+
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const category = params.get("category");
+  const subcategory = params.get("subcategory");
+
+  useEffect(() => {
+    if (!products.length) return;
+
+    let filtered = [...products];
+
+    if (category) {
+      filtered = filtered.filter((p) => p.category === category);
+    }
+
+    if (subcategory) {
+      filtered = filtered.filter((p) => p.subcategory === subcategory);
+    }
+
+    setFilteredProducts(filtered);
+  }, [category, subcategory, products]);
 
   useEffect(() => {
     const loadProducts = async () => {
