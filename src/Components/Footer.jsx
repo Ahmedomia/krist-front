@@ -29,15 +29,18 @@ export default function Footer() {
           </div>
           <div className="flex items-center gap-2 text-gray-300 text-[14px]">
             <img src="/assets/phone.svg" alt="Phone" className="h-4 w-4" />
-            <a href="tel:+17045550127" className="hover:text-white">
-              (704) 555-0127
+            <a href="tel:+2010404550" className="hover:text-white">
+              (20) 1040455096
             </a>
           </div>
 
           <div className="flex items-center gap-2 text-gray-300 text-[14px]">
             <img src="/assets/gmail.svg" alt="Email" className="h-4 w-4" />
-            <a href="mailto:krist@example.com" className="hover:text-white">
-              krist@example.com
+            <a
+              href="mailto:ahmed.omaia12@gmail.com"
+              className="hover:text-white"
+            >
+              ahmed.omaia12@gmail.com
             </a>
           </div>
           <div className="flex items-center gap-2 text-gray-300 text-[14px]">
@@ -47,7 +50,7 @@ export default function Footer() {
               className="h-4 w-4"
             />
             <a
-              href="https://www.google.com/maps?q=3891+Ranchview+Dr.+Richardson,+California+62639"
+              href="https://www.google.com/maps/@29.9712531,31.2640561,12z?entry=ttu&g_ep=EgoyMDI1MDkxNy4wIKXMDSoASAFQAw%3D%3D"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white"

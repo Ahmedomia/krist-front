@@ -32,8 +32,8 @@ export default function PrivacyPolicy() {
         <h2 className="text-xl font-semibold mt-6 mb-2">Contact Us</h2>
         <p>
           If you have questions about our Privacy Policy, contact us at{" "}
-          <a href="mailto:support@krist.com" className="text-blue-600">
-            support@krist.com
+          <a href="mailto:ahmed.omaia12@gmail.com" className="text-blue-600">
+            ahmed.omaia12@gmail.com
           </a>
           .
         </p>
