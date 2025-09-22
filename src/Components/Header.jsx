@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import useCartStore from "../store/cartStore";
 import api from "../../api";
+import useWishlistStore from "../store/wishlistStore";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import debounce from "lodash.debounce";
@@ -22,6 +23,14 @@ export default function Header() {
   const setCartItems = useCartStore((state) => state.setCartItems);
   const user = useUserStore((state) => state.user);
   const logoutUser = useUserStore((state) => state.logout);
+
+  const wishlist = useWishlistStore((state) => state.wishlist);
+  const removeFromWishlist = useWishlistStore(
+    (state) => state.removeFromWishlist
+  );
+  const loadWishlist = useWishlistStore((state) => state.loadWishlist);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
+  const wishlistRef = useRef(null);
 
   const subtotal = (cartItems || []).reduce(
     (total, item) => total + item.price * item.quantity,
@@ -91,6 +100,26 @@ export default function Header() {
   useEffect(() => {
     return () => handleSearch.cancel();
   }, [handleSearch]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (wishlistRef.current && !wishlistRef.current.contains(e.target)) {
+        setWishlistOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
+  const handleRemoveWishlist = (productId) => {
+    removeFromWishlist(productId);
+  };
 
   return (
     <header className="w-full bg-white relative z-50">
@@ -297,13 +326,79 @@ export default function Header() {
               className="cursor-pointer"
             />
           </button>
-          <button className="text-gray-700 hover:text-black">
+          <button
+            onClick={() => setWishlistOpen((prev) => !prev)}
+            className="text-gray-700 hover:text-black relative cursor-pointer"
+          >
             <img
               src="/assets/fav.svg"
               alt="favourite"
               className="cursor-pointer"
             />
+            {wishlist.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                {wishlist.length}
+              </span>
+            )}
           </button>
+
+          {wishlistOpen && (
+            <div
+              ref={wishlistRef}
+              className="absolute right-30 top-12 w-96 bg-white p-6 z-50 shadow-lg rounded"
+            >
+              {wishlist.length === 0 ? (
+                <p>No favourites yet.</p>
+              ) : (
+                <>
+                  <p className="mb-4 text-gray-700">
+                    You have {wishlist.length} favourite items ❤️
+                  </p>
+                  <div className="space-y-4 max-h-60 overflow-y-auto p-2 border-b border-gray-200">
+                    {wishlist.map((item) => (
+                      <div
+                        key={item._id}
+                        className="grid grid-cols-4 items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
+                      >
+                        <div
+                          onClick={() =>
+                            navigate(`/product/${item.productId._id}`)
+                          }
+                          className="flex items-center gap-2 col-span-3"
+                        >
+                          <img
+                            src={item.productId.image}
+                            alt={item.productId.name}
+                            className="w-14 h-14 object-cover rounded"
+                          />
+                          <div className="flex flex-col">
+                            <p className="text-sm font-medium">
+                              {item.productId.name}
+                            </p>
+                            <span className="text-gray-700">
+                              ${item.productId.price}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() =>
+                            handleRemoveWishlist(item.productId._id)
+                          }
+                          className="text-red-500 hover:text-red-700 cursor-pointer"
+                        >
+                          <img
+                            src="/assets/trashred-svgrepo-com.svg"
+                            alt="Delete"
+                            className="w-6 h-6"
+                          />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
           <button
             onClick={() => setCartOpen((prev) => !prev)}
             className="text-gray-700 hover:text-black relative cursor-pointer"

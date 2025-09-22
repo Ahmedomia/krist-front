@@ -17,12 +17,19 @@ api.interceptors.request.use((config) => {
 
 export const fetchProducts = () => api.get("/products");
 export const fetchProductById = (id) => api.get(`/products/${id}`);
+export const fetchRelatedProducts = (id) => api.get(`/products/${id}/related`);
+export const fetchBestSellers = () => api.get("/products/bestsellers");
+
 export const addToCartApi = (productId, quantity, size = "M") =>
   api.post("/cart", { product: productId, quantity, size });
+
 export const updateUserProfile = (profileData) =>
   api.put("/users/profile", profileData);
 export const getUserProfileApi = () => api.get("/users/profile");
-export const fetchRelatedProducts = (id) => api.get(`/products/${id}/related`);
-export const fetchBestSellers = () => api.get("/products/bestsellers");
+
+export const fetchWishlist = () => api.get("/wishlist");
+export const addToWishlist = (productId) => api.post(`/wishlist/${productId}`);
+export const removeFromWishlist = (productId) =>
+  api.delete(`/wishlist/${productId}`);
 
 export default api;

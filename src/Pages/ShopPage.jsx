@@ -15,6 +15,7 @@ import {
 import MyIcons from "../Components/Icons";
 import useCartStore from "../store/cartStore";
 import { fetchProducts } from "../../api";
+import useWishlistStore from "../store/wishlistStore";
 
 export default function ShopPage() {
   const navigate = useNavigate();
@@ -24,7 +25,14 @@ export default function ShopPage() {
   const [notification, setNotification] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const wishlist = useWishlistStore((state) => state.wishlist);
+  const addToWishlist = useWishlistStore((state) => state.addToWishlist);
+  const removeFromWishlist = useWishlistStore(
+    (state) => state.removeFromWishlist
+  );
+  const loadWishlist = useWishlistStore((state) => state.loadWishlist);
   const productsPerPage = 15;
+
   const addToCart = useCartStore((state) => state.addToCart);
 
   useEffect(() => {
@@ -34,6 +42,8 @@ export default function ShopPage() {
         const { data } = await fetchProducts();
         setProducts(data);
         setFilteredProducts(data);
+
+        loadWishlist();
       } catch (err) {
         setError("Failed to load products.");
         console.error(err);
@@ -56,6 +66,26 @@ export default function ShopPage() {
       setTimeout(() => setNotification(""), 2000);
     } catch (err) {
       setNotification("Failed to add item to cart");
+      console.error(err);
+      setTimeout(() => setNotification(""), 2000);
+    }
+  };
+
+  const handleWishlistToggle = async (item) => {
+    try {
+      const exists = wishlist.some((w) => w.productId?._id === item._id);
+
+      if (exists) {
+        await removeFromWishlist(item._id);
+        setNotification(`${item.name} removed from favourites ❌`);
+      } else {
+        await addToWishlist(item);
+        setNotification(`${item.name} added to favourites ❤️`);
+      }
+
+      setTimeout(() => setNotification(""), 2000);
+    } catch (err) {
+      setNotification("Wishlist action failed");
       console.error(err);
       setTimeout(() => setNotification(""), 2000);
     }
@@ -119,7 +149,14 @@ export default function ShopPage() {
                         className="h-80 w-full object-contain mb-3"
                       />
                       <div className="absolute top-3 right-1 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
-                        <button className="bg-white p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
+                        <button
+                          onClick={() => handleWishlistToggle(item)}
+                          className={`p-2 rounded-full shadow-md transition ${
+                            wishlist.includes(item._id)
+                              ? "bg-red-500 text-white"
+                              : "bg-white hover:bg-black hover:text-white"
+                          }`}
+                        >
                           <FaHeart size={16} />
                         </button>
                         <button className="bg-white p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
