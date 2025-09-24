@@ -1,12 +1,87 @@
-# React + Vite
+# 🛒 E-Commerce Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack e-commerce platform built with **React, Node.js, and MongoDB**.  
+Includes secure authentication, product management, shopping cart, and payment gateway integration.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🔑 JWT authentication & authorization (login/signup).
+- 📦 Product listing, search, and category filtering.
+- 🛒 Shopping cart with add/remove/update functionality.
+- 💳 Secure checkout with integrated payment gateway.
+- 📜 Order history & transaction tracking.
+- 📱 Responsive design with React & Tailwind CSS.
+- ⚡ RESTful API backend built with Express.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+**Frontend:** React, Tailwind CSS, Vite  
+**Backend:** Node.js, Express.js  
+**Database:** MongoDB (Mongoose ODM)  
+**Authentication:** JWT, bcrypt  
+**Payments:** Stripe / PayPal (configurable)  
+**Deployment:** Vercel (frontend) & Render/Heroku (backend)
+
+---
+
+## 📂 Project Structure
+
+/client → React frontend
+/server → Node.js & Express backend
+/server/models → MongoDB schemas
+/server/routes → API routes
+
+---
+
+## ⚡ Getting Started
+
+### ✅ Prerequisites
+
+- Node.js (v16+)
+- MongoDB installed locally OR use [MongoDB Atlas](https://www.mongodb.com/atlas)
+- Payment gateway API keys (Stripe or PayPal)
+
+---
+
+### 🔧 Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Ahmedomia/krist-front.git
+cd ecommerce-platform
+
+# Install dependencies
+cd client && npm install
+cd ../server && npm install
+
+
+# Start backend
+cd server
+npm run dev
+
+# Start frontend
+cd client
+npm run dev
+
+# API Endpoints (Examples)
+
+#Auth
+POST /api/auth/signup   → Register user
+POST /api/auth/login    → Login user
+
+#Products
+GET    /api/products        → List products
+GET    /api/products/:id    → Get single product
+
+#Future Improvements
+⭐ Add product reviews & ratings.
+❤️ Implement wishlists & favorites.
+
+#Author
+Ahmed Omia
+- [GitHub](https://github.com/Ahmedomia)
+```
