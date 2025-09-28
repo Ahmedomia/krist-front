@@ -2,10 +2,12 @@ import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { useState } from "react";
 import api from "../../api";
+import useUserStore from "../store/userStore";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const user = useUserStore((state) => state.user);
 
   const handleSubscribe = async () => {
     try {
@@ -67,11 +69,13 @@ export default function Footer() {
                 My Account
               </a>
             </li>
-            <li>
-              <a href="/user/login" className="hover:text-white">
-                Login
-              </a>
-            </li>
+            {!user && (
+              <li>
+                <a href="/user/login" className="hover:text-white">
+                  Login
+                </a>
+              </li>
+            )}
             <li>
               <a href="/CheckoutPage" className="hover:text-white">
                 My Cart
