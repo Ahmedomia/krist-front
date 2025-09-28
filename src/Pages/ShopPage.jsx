@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   FaHeart,
-  FaExchangeAlt,
   FaRegEye,
   FaArrowRight,
   FaArrowLeft,
@@ -195,9 +194,6 @@ export default function ShopPage() {
                           }`}
                         >
                           <FaHeart size={16} />
-                        </button>
-                        <button className="bg-white p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                          <FaExchangeAlt size={16} />
                         </button>
                         <button
                           onClick={() => navigate(`/product/${item._id}`)}

@@ -3,7 +3,7 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useState, useEffect } from "react";
 import MyIcons from "../Components/Icons";
-import { FaHeart, FaExchangeAlt, FaRegEye, FaStar } from "react-icons/fa";
+import { FaHeart, FaRegEye, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
 import { fetchProductById, fetchRelatedProducts } from "../../api";
@@ -532,9 +532,6 @@ export default function ProductDetail() {
                           {notification}
                         </div>
                       )}
-                      <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                        <FaExchangeAlt size={16} />
-                      </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

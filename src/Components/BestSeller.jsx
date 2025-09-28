@@ -4,7 +4,7 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { FaHeart, FaExchangeAlt, FaRegEye } from "react-icons/fa";
+import { FaHeart, FaRegEye } from "react-icons/fa";
 import MyIcons from "../Components/Icons";
 import useCartStore from "../store/cartStore";
 import { fetchBestSellers } from "../../api";
@@ -149,9 +149,6 @@ export default function BestSeller() {
                         }`}
                       >
                         <FaHeart size={16} />
-                      </button>
-                      <button className="bg-white p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                        <FaExchangeAlt size={16} />
                       </button>
                       <button
                         onClick={() => navigate(`/product/${item._id}`)}
