@@ -7,6 +7,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const setUser = useUserStore((state) => state.setUser);
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const { data } = await api.post("/users/login", { email, password });
@@ -27,6 +29,8 @@ export default function LoginPage() {
       setError(
         err.response?.data?.message || "Login failed. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,9 +100,14 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-900 transition"
+            disabled={loading}
+            className={`w-full py-2 rounded-lg transition ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-black text-white hover:bg-gray-900"
+            }`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
           <button
             onClick={() => navigate("/users/signup")}
