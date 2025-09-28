@@ -17,8 +17,12 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
+    const minLoadingTime = new Promise((resolve) => setTimeout(resolve, 300));
+
     try {
       const { data } = await api.post("/users/login", { email, password });
+
+      await minLoadingTime;
 
       setUser(data);
       localStorage.setItem("userInfo", JSON.stringify(data));
@@ -26,6 +30,7 @@ export default function LoginPage() {
       console.log("Logged in:", data);
       navigate("/");
     } catch (err) {
+      await minLoadingTime;
       setError(
         err.response?.data?.message || "Login failed. Please try again."
       );
