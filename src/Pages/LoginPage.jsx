@@ -103,10 +103,13 @@ export default function LoginPage() {
             disabled={loading}
             className={`w-full py-2 rounded-lg transition ${
               loading
-                ? "bg-gray-400 cursor-not-allowed"
+                ? "bg-gray-400 cursor-not-allowed text-white"
                 : "bg-black text-white hover:bg-gray-900"
-            }`}
+            } flex items-center justify-center gap-2`}
           >
+            {loading && (
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            )}
             {loading ? "Logging in..." : "Login"}
           </button>
           <button
