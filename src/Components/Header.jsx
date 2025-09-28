@@ -26,10 +26,8 @@ export default function Header() {
   const logoutUser = useUserStore((state) => state.logout);
 
   const wishlist = useWishlistStore((state) => state.wishlist);
-  const removeFromWishlist = useWishlistStore(
-    (state) => state.removeFromWishlist
-  );
   const loadWishlist = useWishlistStore((state) => state.loadWishlist);
+  const setWishlist = useWishlistStore((state) => state.setWishlist);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const wishlistRef = useRef(null);
 
@@ -59,11 +57,15 @@ export default function Header() {
   }, [setCartItems]);
 
   const handleRemoveItem = async (id) => {
+    const previousCart = [...cartItems];
+    setCartItems(cartItems.filter((item) => item._id !== id));
+
     try {
       const { data } = await api.delete(`/cart/${id}`);
       setCartItems(data.cartItems);
     } catch (err) {
       console.error("Error removing item:", err.response?.data || err.message);
+      setCartItems(previousCart);
     }
   };
 
@@ -122,9 +124,23 @@ export default function Header() {
     loadWishlist();
   }, [loadWishlist]);
 
-  const handleRemoveWishlist = (productId) => {
-    removeFromWishlist(productId);
+  const handleRemoveWishlist = async (wishlistItemId) => {
+    // Keep a copy of current wishlist for rollback
+    const previousWishlist = [...wishlist];
+
+    // Optimistically update UI
+    setWishlist(wishlist.filter((item) => item._id !== wishlistItemId));
+
+    try {
+      // Call API
+      await api.delete(`/wishlist/${wishlistItemId}`);
+    } catch (err) {
+      console.error("Failed to remove from wishlist:", err);
+      // Rollback if API fails
+      setWishlist(previousWishlist);
+    }
   };
+
 
   return (
     <header className="w-full bg-white relative z-50">
@@ -549,9 +565,7 @@ export default function Header() {
                             </div>
                           </div>
                           <button
-                            onClick={() =>
-                              handleRemoveWishlist(item.productId._id)
-                            }
+                            onClick={() => handleRemoveWishlist(item._id)}
                             className="text-red-500 hover:text-red-700 cursor-pointer"
                           >
                             <img
