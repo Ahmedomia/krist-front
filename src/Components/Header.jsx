@@ -482,45 +482,83 @@ export default function Header() {
                     You have {wishlist.length} favourite items ❤️
                   </p>
                   <div className="space-y-4 max-h-60 overflow-y-auto p-2 border-b border-gray-200">
-                    {wishlist.map((item) => (
-                      <div
-                        key={item._id}
-                        className="grid grid-cols-4 items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
-                      >
-                        <div
-                          onClick={() =>
-                            navigate(`/product/${item.productId._id}`)
-                          }
-                          className="flex items-center gap-2 col-span-3"
-                        >
-                          <img
-                            src={item.productId.image}
-                            alt={item.productId.name}
-                            className="w-14 h-14 object-cover rounded"
-                          />
-                          <div className="flex flex-col">
-                            <p className="text-sm font-medium">
-                              {item.productId.name}
-                            </p>
-                            <span className="text-gray-700">
-                              ${item.productId.price}
-                            </span>
+                    {wishlist.map((item) => {
+                      if (!item?.productId) {
+                        return (
+                          <div
+                            key={item._id}
+                            className="grid grid-cols-4 items-center gap-2 p-2 rounded bg-gray-50"
+                          >
+                            <div className="flex items-center gap-2 col-span-3">
+                              <img
+                                src="/assets/placeholder.png"
+                                alt="Unknown product"
+                                className="w-14 h-14 object-cover rounded"
+                              />
+                              <div className="flex flex-col">
+                                <p className="text-sm font-medium text-gray-500">
+                                  Product unavailable
+                                </p>
+                                <span className="text-gray-400">N/A</span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleRemoveWishlist(item._id)}
+                              className="text-red-500 hover:text-red-700 cursor-pointer"
+                            >
+                              <img
+                                src="/assets/trashred-svgrepo-com.svg"
+                                alt="Delete"
+                                className="w-6 h-6"
+                              />
+                            </button>
                           </div>
-                        </div>
-                        <button
-                          onClick={() =>
-                            handleRemoveWishlist(item.productId._id)
-                          }
-                          className="text-red-500 hover:text-red-700 cursor-pointer"
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={item._id}
+                          className="grid grid-cols-4 items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
                         >
-                          <img
-                            src="/assets/trashred-svgrepo-com.svg"
-                            alt="Delete"
-                            className="w-6 h-6"
-                          />
-                        </button>
-                      </div>
-                    ))}
+                          <div
+                            onClick={() =>
+                              navigate(`/product/${item.productId._id}`)
+                            }
+                            className="flex items-center gap-2 col-span-3"
+                          >
+                            <img
+                              src={
+                                item.productId.image ||
+                                "/assets/placeholder.png"
+                              }
+                              alt={item.productId.name || "Unnamed product"}
+                              className="w-14 h-14 object-cover rounded"
+                            />
+                            <div className="flex flex-col">
+                              <p className="text-sm font-medium">
+                                {item.productId.name || "Unnamed product"}
+                              </p>
+                              <span className="text-gray-700">
+                                ${item.productId.price ?? "N/A"}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() =>
+                              handleRemoveWishlist(item.productId._id)
+                            }
+                            className="text-red-500 hover:text-red-700 cursor-pointer"
+                          >
+                            <img
+                              src="/assets/trashred-svgrepo-com.svg"
+                              alt="Delete"
+                              className="w-6 h-6"
+                            />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </>
               )}

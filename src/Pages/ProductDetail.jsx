@@ -2,13 +2,13 @@ import { useParams } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useState, useEffect } from "react";
-import { FaStar } from "react-icons/fa";
 import MyIcons from "../Components/Icons";
-import { FaRegStar, FaExchangeAlt, FaRegEye } from "react-icons/fa";
+import { FaHeart, FaExchangeAlt, FaRegEye, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
 import { fetchProductById, fetchRelatedProducts } from "../../api";
 import Skeleton from "react-loading-skeleton";
+import useWishlistStore from "../store/wishlistStore";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -31,6 +31,39 @@ export default function ProductDetail() {
   const addToCart = useCartStore((state) => state.addToCart);
 
   const [relatedproducts, setRelatedProducts] = useState([]);
+
+  const wishlist = useWishlistStore((state) => state.wishlist);
+  const addToWishlist = useWishlistStore((state) => state.addToWishlist);
+  const removeFromWishlist = useWishlistStore(
+    (state) => state.removeFromWishlist
+  );
+  const loadWishlist = useWishlistStore((state) => state.loadWishlist);
+
+  const [notification, setNotification] = useState("");
+
+  useEffect(() => {
+    loadWishlist();
+  }, [loadWishlist]);
+
+  const handleWishlistToggle = async (item) => {
+    try {
+      const exists = wishlist.some((w) => w.productId?._id === item._id);
+
+      if (exists) {
+        await removeFromWishlist(item._id);
+        setNotification(`${item.name} removed from favourites ❌`);
+      } else {
+        await addToWishlist(item);
+        setNotification(`${item.name} added to favourites ❤️`);
+      }
+
+      setTimeout(() => setNotification(""), 2000);
+    } catch (err) {
+      setNotification("Wishlist action failed");
+      console.error(err);
+      setTimeout(() => setNotification(""), 2000);
+    }
+  };
 
   useEffect(() => {
     const loadRelated = async () => {
@@ -449,19 +482,28 @@ export default function ProductDetail() {
                   key={item._id}
                   className="group rounded transition flex flex-col cursor-pointer"
                 >
-                  <div
-                    onClick={() => navigate(`/product/${item._id}`)}
-                    className="bg-gray-50 hover:bg-[#F3F3F3] rounded h-[300px] p-4 relative flex flex-col justify-between"
-                  >
+                  <div className="bg-gray-50 hover:bg-[#F3F3F3] rounded h-[300px] p-4 relative flex flex-col justify-between">
                     <img
                       src={item.image}
                       alt={item.name}
                       className="h-70 w-full object-contain mb-4"
                     />
                     <div className="absolute top-4 right-1 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
-                      <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
-                        <FaRegStar size={16} />
+                      <button
+                        onClick={() => handleWishlistToggle(item)}
+                        className={`p-2 rounded-full shadow-md transition ${
+                          wishlist.includes(item._id)
+                            ? "bg-red-500 text-white"
+                            : "bg-white hover:bg-black hover:text-white"
+                        }`}
+                      >
+                        <FaHeart />
                       </button>
+                      {notification && (
+                        <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transition">
+                          {notification}
+                        </div>
+                      )}
                       <button className="bg-white cursor-pointer p-2 rounded-full shadow-md hover:bg-black hover:text-white transition">
                         <FaExchangeAlt size={16} />
                       </button>
