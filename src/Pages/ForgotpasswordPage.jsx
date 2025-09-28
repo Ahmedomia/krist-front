@@ -19,7 +19,7 @@ export default function ForgotPassword() {
       console.log("Reset token response:", data);
       localStorage.setItem("resetToken", data.resetToken);
 
-      navigate("/OTP");
+      navigate("/OTP", { state: { email } });
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {

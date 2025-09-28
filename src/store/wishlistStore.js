@@ -65,6 +65,14 @@ const useWishlistStore = create((set) => ({
       console.error("Failed to clear wishlist:", err.message);
     }
   },
+
+  resetWishlist: () => {
+    const user = useUserStore.getState().user;
+    if (user) {
+      localStorage.removeItem(`wishlist_${user.id}`);
+    }
+    set({ wishlist: [] });
+  },
 }));
 
 export default useWishlistStore;

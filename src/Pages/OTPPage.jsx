@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/userStore";
 import api from "../../api";
 import Swal from "sweetalert2";
+import { useLocation } from "react-router-dom";
 
 export default function OTPPage() {
   const user = useUserStore((state) => state.user);
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputRefs = useRef([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email || localStorage.getItem("emailForReset");
 
   const handleChange = (value, index) => {
     if (/^\d?$/.test(value)) {
@@ -33,14 +36,14 @@ export default function OTPPage() {
 
     try {
       const { data } = await api.post("/users/verify-otp", {
-        email: user.email,
+        email,
         otp: otpValue,
       });
 
       console.log("OTP Verified:", data);
 
       localStorage.setItem("otpFromUserInput", data.resetToken);
-      localStorage.setItem("emailForReset", user.email);
+      localStorage.setItem("emailForReset", email);
 
       navigate("/users/update-password");
     } catch (err) {
@@ -87,7 +90,7 @@ export default function OTPPage() {
           <h1 className="text-3xl font-bold mb-2">Enter OTP</h1>
           <p className="text-gray-500 mb-6">
             We have sent a 6-digit code to your registered email
-            <span className="font-medium"> {user.email}</span>
+            <span className="font-medium"> {user?.email}</span>
           </p>
           <div className="flex justify-between gap-2 mb-6">
             {otp.map((digit, index) => (

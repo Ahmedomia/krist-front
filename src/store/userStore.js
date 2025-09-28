@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import api from "../../api";
+import useWishlistStore from "./wishlistStore";
+import useCartStore from "./cartStore";
 
 const useUserStore = create((set) => ({
   user: JSON.parse(localStorage.getItem("userInfo")) || null,
@@ -46,6 +48,8 @@ const useUserStore = create((set) => ({
   logout: () => {
     localStorage.removeItem("userInfo");
     set({ user: null });
+    useCartStore.getState().resetCart();
+    useWishlistStore.getState().resetWishlist();
   },
 }));
 

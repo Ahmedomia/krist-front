@@ -102,6 +102,14 @@ const useCartStore = create((set) => ({
       console.error("Failed to clear cart:", err.response?.data || err.message);
     }
   },
+
+  resetCart: () => {
+    const user = useUserStore.getState().user;
+    if (user) {
+      localStorage.removeItem(`cartItems_${user.id}`);
+    }
+    set({ cartItems: [] });
+  },
 }));
 
 export default useCartStore;
