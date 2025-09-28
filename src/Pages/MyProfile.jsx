@@ -13,11 +13,14 @@ import Footer from "../Components/Footer";
 import useUserStore from "../store/userStore";
 import { useState, useEffect } from "react";
 import { getUserProfileApi, updateUserProfile } from "../../api";
+import { useNavigate } from "react-router-dom";
 export default function ProfilePage() {
   const user = useUserStore((state) => state.user);
   const updateUser = useUserStore((state) => state.updateUser);
 
   const [activeItem, setActiveItem] = useState("personal");
+
+  const navigate = useNavigate();
 
   const [profile, setProfile] = useState({
     firstName: "",
@@ -77,8 +80,13 @@ export default function ProfilePage() {
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
-  if (!user) return <p className="p-6">Please login to view your profile.</p>;
+  useEffect(() => {
+    if (!user) {
+      navigate("/user/login");
+    }
+  }, [user, navigate]);
 
+  if (!user) return null;
   return (
     <div className="min-h-screen bg-white">
       <Header />

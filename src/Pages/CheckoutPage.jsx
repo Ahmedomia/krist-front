@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useCartStore from "../store/cartStore";
+import useUserStore from "../store/userStore";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import OrderSummary from "../Components/OrderSummary";
@@ -12,13 +14,21 @@ export default function CheckoutPage() {
   const setCartItems = useCartStore((state) => state.setCartItems);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const user = useUserStore((state) => state.user);
+  const navigate = useNavigate();
+
+  
 
   useEffect(() => {
+    if (!user) {
+      navigate("/user/login");
+      return;
+    }
+
     const fetchCart = async () => {
       try {
         setLoading(true);
         const { data } = await api.get("/cart");
-        
         setCartItems(data.cartItems || []);
       } catch (err) {
         setError("Failed to load cart");
@@ -29,7 +39,7 @@ export default function CheckoutPage() {
     };
 
     fetchCart();
-  }, [setCartItems]);
+  }, [user, setCartItems, navigate]);
 
   const handleUpdateQuantity = async (id, delta) => {
     try {

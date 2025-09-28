@@ -40,6 +40,10 @@ export default function Header() {
 
   useEffect(() => {
     const fetchCart = async () => {
+      if (!user) {
+        setError("Please login first to view your cart");
+        return;
+      }
       try {
         setLoading(true);
         const { data } = await api.get("/cart");
