@@ -9,6 +9,7 @@ import useCartStore from "../store/cartStore";
 import { fetchProductById, fetchRelatedProducts } from "../../api";
 import Skeleton from "react-loading-skeleton";
 import useWishlistStore from "../store/wishlistStore";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -39,45 +40,36 @@ export default function ProductDetail() {
   );
   const loadWishlist = useWishlistStore((state) => state.loadWishlist);
 
-  const [notification, setNotification] = useState("");
-
   useEffect(() => {
     loadWishlist();
   }, [loadWishlist]);
 
   const handleWishlistToggle = async (item) => {
     const exists = wishlist.some((w) => w.productId?._id === item._id);
-    if (exists) {
-      useWishlistStore.setState((state) => ({
-        wishlist: state.wishlist.filter((w) => w.productId?._id !== item._id),
-      }));
-      setNotification(`${item.name} removed from favourites ❌`);
-    } else {
-      useWishlistStore.setState((state) => ({
-        wishlist: [...state.wishlist, { productId: item }],
-      }));
-      setNotification(`${item.name} added to favourites ❤️`);
-    }
+
+    useWishlistStore.setState((state) => ({
+      wishlist: exists
+        ? state.wishlist.filter((w) => w.productId?._id !== item._id)
+        : [...state.wishlist, { productId: item }],
+    }));
 
     try {
       if (exists) {
         await removeFromWishlist(item._id);
+        toast(`${item.name} removed from favourites ❌`);
       } else {
         await addToWishlist(item);
+        toast(`${item.name} added to favourites ❤️`);
       }
     } catch (err) {
-      console.error("Wishlist failed:", err);
-      setNotification("Wishlist action failed ❌");
       await loadWishlist();
-    } finally {
-      setTimeout(() => setNotification(""), 2000);
+      toast.error("Wishlist action failed ❌");
+      console.error(err);
     }
   };
 
   const handleAddToCart = async () => {
     try {
-      setNotification(`${product.name} added to cart 🛒`);
-
       await addToCart(
         {
           id: product._id,
@@ -90,12 +82,10 @@ export default function ProductDetail() {
         },
         quantity
       );
+      toast.success(`${product.name} added to cart 🛒`);
     } catch (err) {
-      console.error("Add to cart failed:", err);
-
-      setNotification("Failed to add item to cart ❌");
-    } finally {
-      setTimeout(() => setNotification(""), 2000);
+      console.error(err);
+      toast.error("Failed to add item to cart ❌");
     }
   };
 
@@ -169,8 +159,8 @@ export default function ProductDetail() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <Toaster position="top-right" reverseOrder={false} />
       <Header />
-
       <main className="flex-1 p-10 grid grid-cols-1 md:grid-cols-2 gap-10">
         <div>
           <img
@@ -527,11 +517,6 @@ export default function ProductDetail() {
                       >
                         <FaHeart />
                       </button>
-                      {notification && (
-                        <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transition">
-                          {notification}
-                        </div>
-                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

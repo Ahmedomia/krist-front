@@ -1,4 +1,5 @@
 import Skeleton from "react-loading-skeleton";
+import toast, { Toaster } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import "react-loading-skeleton/dist/skeleton.css";
 import Sidebar from "../Components/Sidebar";
@@ -6,12 +7,7 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import {
-  FaHeart,
-  FaRegEye,
-  FaArrowRight,
-  FaArrowLeft,
-} from "react-icons/fa";
+import { FaHeart, FaRegEye, FaArrowRight, FaArrowLeft } from "react-icons/fa";
 import MyIcons from "../Components/Icons";
 import useCartStore from "../store/cartStore";
 import { fetchProducts } from "../../api";
@@ -22,7 +18,6 @@ export default function ShopPage() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [notification, setNotification] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const wishlist = useWishlistStore((state) => state.wishlist);
@@ -81,61 +76,47 @@ export default function ShopPage() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handleAddToCart = async (item) => {
-    setNotification(`${item.name} added to cart!`);
-
     try {
       useCartStore.setState((state) => ({
         cartItems: [...state.cartItems, { ...item, quantity: 1 }],
       }));
       await addToCart(item, 1);
+      toast.success(`${item.name} added to cart!`);
     } catch (err) {
-      setNotification("Failed to add item to cart ❌");
+      toast.error("Failed to add item to cart ❌");
       useCartStore.getState().loadCart();
       console.error(err);
-    } finally {
-      setTimeout(() => setNotification(""), 2000);
     }
   };
 
   const handleWishlistToggle = async (item) => {
     const exists = wishlist.some((w) => w.productId?._id === item._id);
 
-    if (exists) {
-      useWishlistStore.setState((state) => ({
-        wishlist: state.wishlist.filter((w) => w.productId?._id !== item._id),
-      }));
-      setNotification(`${item.name} removed from favourites ❌`);
-    } else {
-      useWishlistStore.setState((state) => ({
-        wishlist: [...state.wishlist, { productId: item }],
-      }));
-      setNotification(`${item.name} added to favourites ❤️`);
-    }
-
     try {
       if (exists) {
+        useWishlistStore.setState((state) => ({
+          wishlist: state.wishlist.filter((w) => w.productId?._id !== item._id),
+        }));
         await removeFromWishlist(item._id);
+        toast(`${item.name} removed from favourites ❌`);
       } else {
+        useWishlistStore.setState((state) => ({
+          wishlist: [...state.wishlist, { productId: item }],
+        }));
         await addToWishlist(item);
+        toast(`${item.name} added to favourites ❤️`);
       }
     } catch (err) {
-      setNotification("Wishlist action failed");
+      toast.error("Wishlist action failed");
       loadWishlist();
       console.error(err);
-    } finally {
-      setTimeout(() => setNotification(""), 2000);
     }
   };
 
   return (
     <div className="flex flex-col min-h-screen relative">
+      <Toaster position="top-right" reverseOrder={false} />
       <Header />
-      {notification && (
-        <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 transition-all">
-          {notification}
-        </div>
-      )}
-
       <div className="flex flex-1">
         <Sidebar
           products={products}

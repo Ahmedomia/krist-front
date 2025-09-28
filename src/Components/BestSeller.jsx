@@ -1,19 +1,16 @@
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaHeart, FaRegEye } from "react-icons/fa";
-import MyIcons from "../Components/Icons";
 import useCartStore from "../store/cartStore";
 import { fetchBestSellers } from "../../api";
 import useWishlistStore from "../store/wishlistStore";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function BestSeller() {
   const navigate = useNavigate();
   const [bestSellers, setBestSellers] = useState([]);
-  const [notification, setNotification] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -44,16 +41,13 @@ export default function BestSeller() {
   }, []);
 
   const handleAddToCart = async (item) => {
-    setNotification(`${item.name} added to cart!`);
-
     try {
       await addToCart(item, 1);
+      toast.success(`${item.name} added to cart!`);
     } catch (err) {
-      setNotification("Failed to add item to cart ❌");
+      toast.error("Failed to add item to cart ❌");
       console.error(err);
     }
-
-    setTimeout(() => setNotification(""), 2000);
   };
 
   const handleWishlistToggle = async (item) => {
@@ -64,34 +58,25 @@ export default function BestSeller() {
         ? state.wishlist.filter((w) => w.productId?._id !== item._id)
         : [...state.wishlist, { productId: item }],
     }));
-    setNotification(
-      exists
-        ? `${item.name} removed from favourites ❌`
-        : `${item.name} added to favourites ❤️`
-    );
 
     try {
       if (exists) {
         await removeFromWishlist(item._id);
+        toast(`${item.name} removed from favourites ❌`);
       } else {
         await addToWishlist(item);
+        toast(`${item.name} added to favourites ❤️`);
       }
     } catch (err) {
       await loadWishlist();
-      setNotification("Wishlist action failed ❌");
+      toast.error("Wishlist action failed ❌");
       console.error(err);
     }
-
-    setTimeout(() => setNotification(""), 2000);
   };
 
   return (
     <div className="flex flex-col min-h-screen relative">
-      {notification && (
-        <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 transition-all">
-          {notification}
-        </div>
-      )}
+      <Toaster position="top-right" reverseOrder={false} />
 
       <main className="flex-1 p-6 flex flex-col">
         {loading ? (
