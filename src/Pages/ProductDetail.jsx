@@ -274,9 +274,16 @@ export default function ProductDetail() {
             >
               Add to Cart
             </button>
-            <span className="material-symbols-outlined border px-4 py-3 rounded-xl hover:bg-black hover:text-white cursor-pointer">
+            <button
+              onClick={() => handleWishlistToggle(product)}
+              className={`material-symbols-outlined border px-4 py-3 rounded-xl transition ${
+                wishlist.some((w) => w.productId?._id === product._id)
+                  ? "bg-red-500 text-white"
+                  : "hover:bg-black hover:text-white"
+              }`}
+            >
               favorite
-            </span>
+            </button>
           </div>
         </div>
       </main>
