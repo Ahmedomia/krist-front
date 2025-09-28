@@ -2,7 +2,7 @@ import { create } from "zustand";
 import useUserStore from "./userStore";
 import api, { addToCartApi } from "../../api";
 
-const useCartStore = create((set) => ({
+const useCartStore = create((set, get) => ({
   cartItems: [],
 
   setCartItems: (items) => set({ cartItems: items }),
@@ -13,8 +13,9 @@ const useCartStore = create((set) => ({
 
     try {
       const { data } = await api.get("/cart");
-      set({ cartItems: data.cart });
-      localStorage.setItem(`cartItems_${user.id}`, JSON.stringify(data.cart));
+      const cart = data.cartItems ?? [];
+      set({ cartItems: cart });
+      localStorage.setItem(`cartItems_${user.id}`, JSON.stringify(cart));
     } catch (err) {
       console.log(err);
       const saved = localStorage.getItem(`cartItems_${user.id}`);
@@ -29,26 +30,12 @@ const useCartStore = create((set) => ({
       return;
     }
 
-    set((state) => {
-      const existing = state.cartItems.find((i) => i._id === product._id);
-      if (existing) {
-        return {
-          cartItems: state.cartItems.map((i) =>
-            i._id === product._id
-              ? { ...i, quantity: i.quantity + quantity }
-              : i
-          ),
-        };
-      } else {
-        return { cartItems: [...state.cartItems, { ...product, quantity }] };
-      }
-    });
-
     try {
       const { data } = await addToCartApi(product._id ?? product.id, quantity);
-      set({ cartItems: data.cart });
-      localStorage.setItem(`cartItems_${user.id}`, JSON.stringify(data.cart));
-      return data;
+      const cart = data.cartItems ?? [];
+      set({ cartItems: cart });
+      localStorage.setItem(`cartItems_${user.id}`, JSON.stringify(cart));
+      return cart;
     } catch (err) {
       console.error(
         "Failed to add to cart:",
@@ -63,9 +50,8 @@ const useCartStore = create((set) => ({
     if (!user) return;
 
     try {
-      const { data } = await api.put(`/cart/${id}`, { amount });
-      set({ cartItems: data.cart });
-      localStorage.setItem(`cartItems_${user.id}`, JSON.stringify(data.cart));
+      await api.put(`/cart/${id}`, { amount });
+      await get().loadCart();
     } catch (err) {
       console.error(
         "Failed to update quantity:",
@@ -79,27 +65,13 @@ const useCartStore = create((set) => ({
     if (!user) return;
 
     try {
-      const { data } = await api.delete(`/cart/${id}`);
-      set({ cartItems: data.cart });
-      localStorage.setItem(`cartItems_${user.id}`, JSON.stringify(data.cart));
+      await api.delete(`/cart/${id}`);
+      await get().loadCart();
     } catch (err) {
       console.error(
         "Failed to remove item:",
         err.response?.data || err.message
       );
-    }
-  },
-
-  clearCart: async () => {
-    const user = useUserStore.getState().user;
-    if (!user) return;
-
-    try {
-      await api.delete("/cart");
-      set({ cartItems: [] });
-      localStorage.removeItem(`cartItems_${user.id}`);
-    } catch (err) {
-      console.error("Failed to clear cart:", err.response?.data || err.message);
     }
   },
 

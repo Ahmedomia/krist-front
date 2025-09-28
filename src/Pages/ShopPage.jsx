@@ -82,33 +82,48 @@ export default function ShopPage() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handleAddToCart = async (item) => {
+    setNotification(`${item.name} added to cart!`);
+
     try {
+      useCartStore.setState((state) => ({
+        cartItems: [...state.cartItems, { ...item, quantity: 1 }],
+      }));
       await addToCart(item, 1);
-      setNotification(`${item.name} added to cart!`);
-      setTimeout(() => setNotification(""), 2000);
     } catch (err) {
-      setNotification("Failed to add item to cart");
+      setNotification("Failed to add item to cart ❌");
+      useCartStore.getState().loadCart();
       console.error(err);
+    } finally {
       setTimeout(() => setNotification(""), 2000);
     }
   };
 
   const handleWishlistToggle = async (item) => {
-    try {
-      const exists = wishlist.some((w) => w.productId?._id === item._id);
+    const exists = wishlist.some((w) => w.productId?._id === item._id);
 
+    if (exists) {
+      useWishlistStore.setState((state) => ({
+        wishlist: state.wishlist.filter((w) => w.productId?._id !== item._id),
+      }));
+      setNotification(`${item.name} removed from favourites ❌`);
+    } else {
+      useWishlistStore.setState((state) => ({
+        wishlist: [...state.wishlist, { productId: item }],
+      }));
+      setNotification(`${item.name} added to favourites ❤️`);
+    }
+
+    try {
       if (exists) {
         await removeFromWishlist(item._id);
-        setNotification(`${item.name} removed from favourites ❌`);
       } else {
         await addToWishlist(item);
-        setNotification(`${item.name} added to favourites ❤️`);
       }
-
-      setTimeout(() => setNotification(""), 2000);
     } catch (err) {
       setNotification("Wishlist action failed");
+      loadWishlist();
       console.error(err);
+    } finally {
       setTimeout(() => setNotification(""), 2000);
     }
   };

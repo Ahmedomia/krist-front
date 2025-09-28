@@ -44,31 +44,44 @@ export default function BestSeller() {
   }, []);
 
   const handleAddToCart = async (item) => {
+    setNotification(`${item.name} added to cart!`);
+
     try {
       await addToCart(item, 1);
-      setNotification(`${item.name} added to cart!`);
     } catch (err) {
       setNotification("Failed to add item to cart ❌");
       console.error(err);
     }
+
     setTimeout(() => setNotification(""), 2000);
   };
 
   const handleWishlistToggle = async (item) => {
-    try {
-      const exists = wishlist.some((w) => w.productId?._id === item._id);
+    const exists = wishlist.some((w) => w.productId?._id === item._id);
 
+    useWishlistStore.setState((state) => ({
+      wishlist: exists
+        ? state.wishlist.filter((w) => w.productId?._id !== item._id)
+        : [...state.wishlist, { productId: item }],
+    }));
+    setNotification(
+      exists
+        ? `${item.name} removed from favourites ❌`
+        : `${item.name} added to favourites ❤️`
+    );
+
+    try {
       if (exists) {
         await removeFromWishlist(item._id);
-        setNotification(`${item.name} removed from favourites ❌`);
       } else {
         await addToWishlist(item);
-        setNotification(`${item.name} added to favourites ❤️`);
       }
     } catch (err) {
+      await loadWishlist();
       setNotification("Wishlist action failed ❌");
       console.error(err);
     }
+
     setTimeout(() => setNotification(""), 2000);
   };
 

@@ -46,21 +46,55 @@ export default function ProductDetail() {
   }, [loadWishlist]);
 
   const handleWishlistToggle = async (item) => {
-    try {
-      const exists = wishlist.some((w) => w.productId?._id === item._id);
+    const exists = wishlist.some((w) => w.productId?._id === item._id);
+    if (exists) {
+      useWishlistStore.setState((state) => ({
+        wishlist: state.wishlist.filter((w) => w.productId?._id !== item._id),
+      }));
+      setNotification(`${item.name} removed from favourites ❌`);
+    } else {
+      useWishlistStore.setState((state) => ({
+        wishlist: [...state.wishlist, { productId: item }],
+      }));
+      setNotification(`${item.name} added to favourites ❤️`);
+    }
 
+    try {
       if (exists) {
         await removeFromWishlist(item._id);
-        setNotification(`${item.name} removed from favourites ❌`);
       } else {
         await addToWishlist(item);
-        setNotification(`${item.name} added to favourites ❤️`);
       }
-
-      setTimeout(() => setNotification(""), 2000);
     } catch (err) {
-      setNotification("Wishlist action failed");
-      console.error(err);
+      console.error("Wishlist failed:", err);
+      setNotification("Wishlist action failed ❌");
+      await loadWishlist();
+    } finally {
+      setTimeout(() => setNotification(""), 2000);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      setNotification(`${product.name} added to cart 🛒`);
+
+      await addToCart(
+        {
+          id: product._id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          image: selectedImage,
+          color: selectedColor,
+          size: selectedSize,
+        },
+        quantity
+      );
+    } catch (err) {
+      console.error("Add to cart failed:", err);
+
+      setNotification("Failed to add item to cart ❌");
+    } finally {
       setTimeout(() => setNotification(""), 2000);
     }
   };
@@ -249,20 +283,7 @@ export default function ProductDetail() {
               </button>
             </div>
             <button
-              onClick={() =>
-                addToCart(
-                  {
-                    id: product._id,
-                    name: product.name,
-                    brand: product.brand,
-                    price: product.price,
-                    image: selectedImage,
-                    color: selectedColor,
-                    size: selectedSize,
-                  },
-                  quantity
-                )
-              }
+              onClick={handleAddToCart}
               disabled={
                 !selectedSize || !product.inStockSizes.includes(selectedSize)
               }
