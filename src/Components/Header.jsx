@@ -125,22 +125,16 @@ export default function Header() {
   }, [loadWishlist]);
 
   const handleRemoveWishlist = async (wishlistItemId) => {
-    // Keep a copy of current wishlist for rollback
     const previousWishlist = [...wishlist];
-
-    // Optimistically update UI
     setWishlist(wishlist.filter((item) => item._id !== wishlistItemId));
 
     try {
-      // Call API
       await api.delete(`/wishlist/${wishlistItemId}`);
     } catch (err) {
       console.error("Failed to remove from wishlist:", err);
-      // Rollback if API fails
       setWishlist(previousWishlist);
     }
   };
-
 
   return (
     <header className="w-full bg-white relative z-50">
@@ -416,6 +410,11 @@ export default function Header() {
           <a href="/ContactUs" className="hover:text-black">
             Contact Us
           </a>
+          {user?.isAdmin && (
+            <a href="/admin" className="hover:text-black">
+              Admin
+            </a>
+          )}
         </nav>
 
         <div className="flex items-center gap-4 relative">

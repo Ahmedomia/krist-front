@@ -8,6 +8,13 @@ import OTPPage from "./Pages/OTPPage";
 import NewPassword from "./Pages/NewpasswordPage";
 import ProductDetail from "./Pages/ProductDetail";
 import ProfilePage from "./Pages/MyProfile";
+import AdminDashboard from "./Pages/AdminDashboard";
+import AdminRoute from "./Components/AdminRoute";
+import AdminLayout from "./Pages/AdminLayout";
+import AdminUsers from "./Pages/AdminUsers";
+import AdminProducts from "./Pages/AdminProducts";
+import AdminOrders from "./Pages/AdminOrders";
+import AdminProductForm from "./Pages/AdminProductForm";
 import CheckoutPage from "./Pages/CheckoutPage";
 import ShippingPage from "./Pages/ShippingPage";
 import PaymentPage from "./Pages/PaymentPage";
@@ -36,6 +43,15 @@ function App() {
       <Route path="/terms-and-conditions" element={<TermsConditions />} />
       <Route path="/ContactUs" element={<ContactUs />} />
       <Route path="/OurStory" element={<OurStory />} />
+      <Route element={<AdminRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="products/new" element={<AdminProductForm />} />
+          <Route path="orders" element={<AdminOrders />} />
+        </Route>
+      </Route>
     </Routes>
   );
 }

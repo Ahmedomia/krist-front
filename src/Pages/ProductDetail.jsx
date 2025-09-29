@@ -186,7 +186,7 @@ export default function ProductDetail() {
         <div>
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold">{product.brand}</h1>
-            {selectedSize && product.inStockSizes.includes(selectedSize) ? (
+            {product.stock > 0 ? (
               <span className="text-green-600 font-semibold text-sm bg-[#EBFAEB] p-2 rounded">
                 In Stock
               </span>
@@ -274,11 +274,9 @@ export default function ProductDetail() {
             </div>
             <button
               onClick={handleAddToCart}
-              disabled={
-                !selectedSize || !product.inStockSizes.includes(selectedSize)
-              }
+              disabled={product.stock <= 0}
               className={`px-26 py-3 rounded-xl transition ${
-                !selectedSize || !product.inStockSizes.includes(selectedSize)
+                product.stock <= 0
                   ? "bg-gray-400 text-white cursor-not-allowed"
                   : "bg-black text-white hover:bg-gray-900 cursor-pointer"
               }`}
