@@ -32,7 +32,6 @@ function AdminProducts() {
     fetchProducts();
   };
 
-
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Products</h2>
