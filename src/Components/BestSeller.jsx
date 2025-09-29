@@ -29,7 +29,6 @@ export default function BestSeller() {
         setLoading(true);
         const { data } = await fetchBestSellers();
         setBestSellers(data);
-        loadWishlist();
       } catch (err) {
         setError("Failed to load best sellers.");
         console.error(err);
