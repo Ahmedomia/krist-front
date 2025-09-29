@@ -36,7 +36,11 @@ const useUserStore = create((set) => ({
 
   login: async (email, password) => {
     try {
-      const { data } = await api.post("/users/login", { email, password });
+      const { data } = await api.post(
+        "/users/login",
+        { email, password },
+        { withCredentials: true }
+      );
       localStorage.setItem("userInfo", JSON.stringify(data));
       set({ user: data });
       return data;
