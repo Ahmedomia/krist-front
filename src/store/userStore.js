@@ -39,7 +39,7 @@ const useUserStore = create((set) => ({
       const { data } = await api.post(
         "/users/login",
         { email, password },
-        { withCredentials: true }
+        { credentials: true }
       );
       localStorage.setItem("userInfo", JSON.stringify(data));
       set({ user: data });
