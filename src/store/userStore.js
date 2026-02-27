@@ -20,11 +20,15 @@ const useUserStore = create((set) => ({
 
   signup: async (userData) => {
     try {
-      const { data } = await api.post("/users/signup", {
-        name: `${userData.firstName} ${userData.lastName}`,
-        email: userData.email,
-        password: userData.password,
-      });
+      const { data } = await api.post(
+        "/users/signup",
+        {
+          name: `${userData.firstName} ${userData.lastName}`,
+          email: userData.email,
+          password: userData.password,
+        },
+        { withCredentials: true }
+      );
 
       localStorage.setItem("userInfo", JSON.stringify(data));
       set({ user: data });
@@ -39,7 +43,7 @@ const useUserStore = create((set) => ({
       const { data } = await api.post(
         "/users/login",
         { email, password },
-        { credentials: true }
+        { withCredentials: true }
       );
       localStorage.setItem("userInfo", JSON.stringify(data));
       set({ user: data });
